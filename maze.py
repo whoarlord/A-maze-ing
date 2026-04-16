@@ -40,11 +40,12 @@ class Maze:
 
     def __init__(
             self, width: int, height: int, entry: tuple[int, int],
-            exit: tuple[int, int], perfect: bool):
+            exit: tuple[int, int], output_file: str, perfect: bool):
         self.width = width
         self.height = height
         self.entry = entry
         self.exit = exit
+        self.output_file = output_file
         self.perfect = perfect
         self.maze_map: list[list[Cell]] = self.create_map()
 
@@ -91,6 +92,7 @@ class Maze:
             raise ValueError("Unknow direction")
 
     def print_map(self):
+        print("Map:")
         for i in range(self.height):
             for j in range(self.width):
                 print(self.maze_map[i][j], end="")

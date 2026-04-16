@@ -3,6 +3,8 @@
 from Parser import Parser
 from errors import ParseError, PerfectError, InvalidValueError
 from typing import Any
+from maze import Maze
+from Prim import Prim
 
 
 def main():
@@ -19,8 +21,13 @@ def main():
                     Exception) as e:
                 print(f"{e}")
                 exit(1)
-
-    print(f"{dictionary}")
+    dictionary = dict(
+        map(lambda item: (item[0].lower(), item[1]),
+            dictionary.items()))
+    maze = Maze(**dictionary)
+    prim = Prim()
+    prim.create_map(maze)
+    maze.print_map()
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ PYTHON=$(VIRTUALENV)/bin/python3
 PIP=$(VIRTUALENV)/bin/pip
 
 MINILIBX=mlx_CLXV
+MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
 DEPENDENCIES=requirements.txt
 
 MAIN=a-maze-ing.py
@@ -17,10 +18,12 @@ MYPYFLAGS=--warn-return-any --warn-unused-ignores --ignore-missing-imports --dis
 all: install run
 
 install:
-	$(MAKE) -C $(MINILIBX)
 	$(PIP) install -r $(DEPENDENCIES)
 
-run: $(VIRTUALENV) install
+$(MLX): install
+	$(MAKE) -C $(MINILIBX)
+
+run: $(VIRTUALENV)
 	$(PYTHON) $(MAIN) $(MAP)
 
 debug:
