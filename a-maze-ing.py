@@ -18,6 +18,8 @@ def main():
             except (ParseError, PerfectError, InvalidValueError,
                     Exception) as e:
                 print(f"{e}")
+                print("An error has been found on the configuration file, "
+                      "the program will now close.")
                 exit(1)
 
     print(f"{dictionary}")

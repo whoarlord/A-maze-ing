@@ -18,6 +18,14 @@ class PerfectError(Exception):
 
 class InvalidValueError(Exception):
 
-    def __init__(self, line: str, value: int) -> None:
+    def __init__(
+            self, line: str, value: int, limit: int, limit_name: str) -> None:
+
+        if value > limit:
+            message = f" The value: {value} can't be bigger than the {
+                limit_name}."
+        elif value < 0:
+            message = f" The value: {value} can't be smaller than 0."
         super().__init__(
-            f"Error on line: '{line}'. The value {value} is incorrect.")
+            f"Error on line: '{line}'. The value {value}  is incorrect." +
+            message)
