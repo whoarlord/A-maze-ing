@@ -5,14 +5,7 @@ from errors import ParseError, PerfectError, InvalidValueError
 from typing import Any
 from maze import Maze
 from Prim import Prim
-from mlx import Mlx
-
-
-def close_hook(params: tuple[Any, Any, Any]) -> int:
-    m: Mlx
-    m, _, mlx_ptr = params
-    m.mlx_loop_exit(mlx_ptr)
-    return (1)
+from Graphics import Graphics
 
 
 def main():
@@ -38,13 +31,9 @@ def main():
     prim = Prim()
     prim.create_map(maze)
     maze.print_map()
-    m: Mlx = Mlx()
-    mlx_ptr = m.mlx_init()
-    win_ptr = m.mlx_new_window(mlx_ptr, 1000, 1000, "Maze")
-    params = (m, win_ptr, mlx_ptr)
-    m.mlx_hook(win_ptr, 33, 0, close_hook, params)
-    m.mlx_loop(mlx_ptr)
-    m.mlx_destroy_window(mlx_ptr, win_ptr)
+    graphics = Graphics()
+    graphics.create_cell(190, 190, 200, 200, 15)
+    graphics.loop()
 
 
 if __name__ == "__main__":
