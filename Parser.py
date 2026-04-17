@@ -10,11 +10,12 @@ class Parser:
 
         if "=" in line:
 
-            if len(line.split("=")) != 2:
-                print(f"Syntax error on line {line}")
-                raise Exception
-
             parameter, value = line.split("=")
+
+            if value == "":
+                raise Exception(
+                    f"Syntax error on line '{line}'. Please follow the next "
+                    "format: <NAME>=<value>")
 
             match parameter:
                 case ("WIDTH" | "HEIGHT"):
@@ -37,15 +38,19 @@ class Parser:
                         y_int = int(y)
 
                         if x_int < 0 or x_int > dictionary.get("WIDTH"):
-                            raise InvalidValueError(line, x_int)
+                            raise InvalidValueError(
+                                line, x_int, dictionary.get("WIDTH"), "WIDTH")
                         elif y_int < 0 or y_int > dictionary.get("HEIGHT"):
-                            raise InvalidValueError(line, y_int)
+                            raise InvalidValueError(
+                                line, y_int, dictionary.get("HEIGHT"),
+                                "HEIGHT")
 
                         dictionary.update({parameter: (x_int, y_int)})
 
                     except ValueError as e:
-                        print(f"{e}")
-
+                        raise Exception(
+                            f"Error on line: '{line}'. {e}. Please follow the "
+                            "next format for the ENTRY and EXIT: <NAME>=x,y")
                 case "OUTPUT_FILE":
 
                     dictionary.update({parameter: value})
@@ -55,13 +60,11 @@ class Parser:
                     if value == "True":
                         dictionary.update({parameter: True})
                     elif value == "False":
-                        # Si no me llega true y me llega cualquier otra cosa lo mando default a false?
                         dictionary.update({parameter: False})
                     else:
                         raise PerfectError(line)
 
                 case _:
-                    print(f"Unknown value on line: {line}")
-                    raise Exception
+                    raise Exception(f"Unknown value on line: {line}")
         else:
             raise ParseError(line)
