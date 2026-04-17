@@ -1,5 +1,6 @@
 from mlx import Mlx
 from math import sqrt
+from maze import Maze, Cell
 
 
 class Graphics:
@@ -81,3 +82,26 @@ class Graphics:
             print(f"N; x1: {x1}, y1: {y1}, x2: {x2}, y2: {y1}")
             self.draw_line(x1, y1, x2, y1)
         pass
+
+    def display_maze(self, maze: Maze):
+        initial_x: int = 10
+        actual_y: int = 10
+        increment: int = 20
+
+        for i in range(maze.height):
+            actual_x: int = initial_x
+            for j in range(maze.width):
+                if maze.entry == (j, i):
+                    self.draw_pixel_multiplied(actual_x + 1,
+                                               actual_y + 1,
+                                               0xFF00FF00, increment - 1)
+                elif maze.exit == (j, i):
+                    self.draw_pixel_multiplied(actual_x + 1,
+                                               actual_y + 1,
+                                               0xFFFF0000, increment - 1)
+                cell: Cell = maze.maze_map[i][j]
+                self.create_cell(
+                    actual_x, actual_y, actual_x + increment, actual_y +
+                    increment, cell.calculate_walls())
+                actual_x += increment
+            actual_y += increment

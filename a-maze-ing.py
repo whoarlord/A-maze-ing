@@ -32,7 +32,7 @@ def main():
     prim.create_map(maze)
     maze.print_map()
     graphics = Graphics()
-    graphics.create_cell(190, 190, 200, 200, 15)
+    graphics.display_maze(maze)
     graphics.loop()
 
 

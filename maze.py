@@ -30,10 +30,12 @@ class Cell:
         else:
             raise ValueError("Unknow direction")
 
+    def calculate_walls(self) -> int:
+        return self.N * 1 + self.E * 2 + self.S * 4 + self.W * 8
+
     def __str__(self):
-        result: int = self.N * 1 + self.E * 2 + self.S * 4 + self.W * 8
         hexadeimal: str = "0123456789ABCDEF"
-        return f"{hexadeimal[result]}"
+        return f"{hexadeimal[self.calculate_walls()]}"
 
 
 class Maze:
