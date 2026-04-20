@@ -96,15 +96,15 @@ class Graphics:
             actual_x: int = initial_x
             for j in range(maze.width):
                 if maze.entry == (j, i):
-                    self.draw_box(actual_x, actual_y, 0xFF00FF00,
-                                  increment_x,
+                    self.draw_box(actual_x, actual_y, 0xFF00FF00, increment_x,
                                   increment_y)
                 elif maze.exit == (j, i):
-                    self.draw_box(actual_x + self.wall_multiplier, actual_y +
-                                  self.wall_multiplier, 0xFFFF0000,
-                                  increment_x - self.wall_multiplier,
-                                  increment_y - self.wall_multiplier)
+                    self.draw_box(actual_x, actual_y, 0xFFFF0000, increment_x,
+                                  increment_y)
                 cell: Cell = maze.maze_map[i][j]
+                if cell.block_42:
+                    self.draw_box(actual_x, actual_y, 0xFFD3D3D3, increment_x,
+                                  increment_y)
                 self.create_cell(
                     actual_x, actual_y, actual_x + increment_x, actual_y +
                     increment_y, cell.calculate_walls())
