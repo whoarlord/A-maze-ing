@@ -55,7 +55,8 @@ class Maze:
         self.output_file = output_file
         self.perfect = perfect
         self.maze_map: list[list[Cell]] = self.create_map()
-        self.create_42()
+        if (self.create_42()):
+            self.maze_map = self.create_map()
 
     def create_map(self) -> list[list[Cell]]:
         result: list[list[Cell]] = []
@@ -99,33 +100,64 @@ class Maze:
         else:
             raise ValueError("Unknow direction")
 
-    def create_42(self):
+    def check_42_collisiones(self, x: int, y: int):
+        return ((self.entry[0] == x and self.entry[1] == y)
+                or (self.exit[0] == x and self.exit[1] == y))
+
+    def create_42(self) -> int:
         """The 42 must have a width of 7 and a height of 5"""
         x1: int = int(self.width / 2 - 3)
         y1: int = int(self.height / 2 - 2)
         x2: int = x1 + 7
         y2: int = y1 + 5
-
+        if (x1 < 0 or x2 >= self.width or y1 < 0 or y2 >= self.height):
+            print("The number 42 cannot be printed cause of space")
+            return (0)
         moving_y: int = y1
         while (moving_y < y2):
             moving_x: int = x1
             while (moving_x < x2):
                 if (moving_x == x1 and moving_y - y1 < 3):
+                    if self.check_42_collisiones(moving_x, moving_y):
+                        print("The number 42 cannot be printed cause of "
+                              "collision")
+                        return (1)
                     self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_x == x1 + 1 and moving_y - y1 == 2):
+                    if self.check_42_collisiones(moving_x, moving_y):
+                        print("The number 42 cannot be printed cause of "
+                              "collision")
+                        return (1)
                     self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_x == x1 + 2 and moving_y - y1 >= 2):
+                    if self.check_42_collisiones(moving_x, moving_y):
+                        print("The number 42 cannot be printed cause of "
+                              "collision")
+                        return (1)
                     self.get_cell(moving_x, moving_y).cell_42()
                 elif ((moving_y == y1 or moving_y == y1 + 2
                        or moving_y == y1 + 4)
                       and moving_x - x1 > 3):
+                    if self.check_42_collisiones(moving_x, moving_y):
+                        print("The number 42 cannot be printed cause of "
+                              "collision")
+                        return (1)
                     self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_y == y1 + 1 and moving_x - x1 == 6):
+                    if self.check_42_collisiones(moving_x, moving_y):
+                        print("The number 42 cannot be printed cause of "
+                              "collision")
+                        return (1)
                     self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_y == y1 + 3 and moving_x - x1 == 4):
+                    if self.check_42_collisiones(moving_x, moving_y):
+                        print("The number 42 cannot be printed cause of "
+                              "collision")
+                        return (1)
                     self.get_cell(moving_x, moving_y).cell_42()
                 moving_x += 1
             moving_y += 1
+        return (0)
 
     def print_map(self):
         print("Map:")
