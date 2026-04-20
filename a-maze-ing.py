@@ -3,6 +3,9 @@
 from Parser import Parser
 from errors import ParseError, PerfectError, InvalidValueError
 from typing import Any
+from maze import Maze
+from Prim import Prim
+from Graphics import Graphics
 
 
 def main():
@@ -21,8 +24,16 @@ def main():
                 print("An error has been found on the configuration file, "
                       "the program will now close.")
                 exit(1)
-
-    print(f"{dictionary}")
+    dictionary = dict(
+        map(lambda item: (item[0].lower(), item[1]),
+            dictionary.items()))
+    maze = Maze(**dictionary)
+    prim = Prim()
+    prim.create_map(maze)
+    maze.print_map()
+    graphics = Graphics()
+    graphics.display_maze(maze)
+    graphics.loop()
 
 
 if __name__ == "__main__":

@@ -1,9 +1,13 @@
-PIP=pip install
-DEPENDENCIES= requirements.txt
 MAP=config.txt
-
-PYTHON=python3
 DEBUGGER= -m pdb
+
+VIRTUALENV= MazeEnv
+PYTHON=$(VIRTUALENV)/bin/python3
+PIP=$(VIRTUALENV)/bin/pip
+
+MINILIBX=mlx_CLXV
+MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
+DEPENDENCIES=requirements.txt
 
 MAIN=a-maze-ing.py
 
@@ -14,13 +18,20 @@ MYPYFLAGS=--warn-return-any --warn-unused-ignores --ignore-missing-imports --dis
 all: install run
 
 install:
-	$(PIP) -r $(DEPENDENCIES)
+	$(PIP) install -r $(DEPENDENCIES)
 
-run:
+$(MLX): install
+	$(MAKE) -C $(MINILIBX)
+
+run: $(VIRTUALENV)
 	$(PYTHON) $(MAIN) $(MAP)
 
 debug:
 	$(PYTHON) $(DEBUGGER) $(MAIN)
+
+$(VIRTUALENV):
+	python3 -m venv $(VIRTUALENV)
+
 
 clean:
 	py3clean .
@@ -33,3 +44,5 @@ lint:
 lint-strict:
 	flake8 .
 	mypy . --strict
+
+SILENT: all install run debug env clean lint lint-strict
