@@ -32,9 +32,9 @@ def main():
     prim = Prim()
     prim.create_map(maze)
     maze.print_map()
-    graphics = Graphics()
-    graphics.display_maze(maze)
-    graphics.display_menu(maze)
+    # graphics = Graphics()
+    # graphics.display_maze(maze)
+    # graphics.display_menu(maze)
     maze_solver.solve_maze(maze)
 
 
