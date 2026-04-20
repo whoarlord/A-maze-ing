@@ -1,6 +1,7 @@
 class Cell:
     def __init__(self):
         self.visited: bool = False
+        self.block_42: bool = False
         self.N = 0
         self.S = 0
         self.E = 0
@@ -12,6 +13,10 @@ class Cell:
         self.S = 1
         self.E = 1
         self.W = 1
+
+    def cell_42(self):
+        self.block_42 = True
+        self.cover_all()
 
     def uncover_dir(self, visiting_cell: "Cell", dir: int) -> None:
         visiting_cell.cover_all()
@@ -50,6 +55,7 @@ class Maze:
         self.output_file = output_file
         self.perfect = perfect
         self.maze_map: list[list[Cell]] = self.create_map()
+        self.create_42()
 
     def create_map(self) -> list[list[Cell]]:
         result: list[list[Cell]] = []
@@ -92,6 +98,34 @@ class Maze:
             return x - 1, y
         else:
             raise ValueError("Unknow direction")
+
+    def create_42(self):
+        """The 42 must have a width of 7 and a height of 5"""
+        x1: int = int(self.width / 2 - 3)
+        y1: int = int(self.height / 2 - 2)
+        x2: int = x1 + 7
+        y2: int = y1 + 5
+
+        moving_y: int = y1
+        while (moving_y < y2):
+            moving_x: int = x1
+            while (moving_x < x2):
+                if (moving_x == x1 and moving_y - y1 < 3):
+                    self.get_cell(moving_x, moving_y).cell_42()
+                elif (moving_x == x1 + 1 and moving_y - y1 == 2):
+                    self.get_cell(moving_x, moving_y).cell_42()
+                elif (moving_x == x1 + 2 and moving_y - y1 >= 2):
+                    self.get_cell(moving_x, moving_y).cell_42()
+                elif ((moving_y == y1 or moving_y == y1 + 2
+                       or moving_y == y1 + 4)
+                      and moving_x - x1 > 3):
+                    self.get_cell(moving_x, moving_y).cell_42()
+                elif (moving_y == y1 + 1 and moving_x - x1 == 6):
+                    self.get_cell(moving_x, moving_y).cell_42()
+                elif (moving_y == y1 + 3 and moving_x - x1 == 4):
+                    self.get_cell(moving_x, moving_y).cell_42()
+                moving_x += 1
+            moving_y += 1
 
     def print_map(self):
         print("Map:")

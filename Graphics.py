@@ -1,13 +1,19 @@
 from mlx import Mlx
 from math import sqrt
 from maze import Maze, Cell
+from screeninfo import get_monitors, Monitor
 
 
 class Graphics:
     def __init__(self):
         self.m: Mlx = Mlx()
         self.mlx_ptr = self.m.mlx_init()
-        self.win_ptr = self.m.mlx_new_window(self.mlx_ptr, 640, 360, "Maze")
+        monitor: Monitor = get_monitors()[0]
+        self.win_height: int = int(monitor.height * 2 / 3)
+        self.win_width: int = int(monitor.width * 2 / 3)
+        self.win_ptr = self.m.mlx_new_window(
+            self.mlx_ptr, self.win_width, self.win_height, "Maze")
+        self.wall_multiplier: int = 5
         self.m.mlx_hook(self.win_ptr, 33, 0, self.close_hook, self)
 
     @staticmethod
@@ -19,10 +25,17 @@ class Graphics:
         self.m.mlx_loop(self.mlx_ptr)
         self.m.mlx_destroy_window(self.mlx_ptr, self.win_ptr)
 
+    def draw_box(self, pixel_x: int, pixel_y: int,
+                 color: int, multiplier_x: int, multiplier_y):
+        for i in range(multiplier_y):
+            for j in range(multiplier_x):
+                self.m.mlx_pixel_put(self.mlx_ptr, self.win_ptr,
+                                     pixel_x + j, pixel_y + i, color)
+
     def draw_pixel_multiplied(self, pixel_x: int, pixel_y: int,
-                              color: int, multiplier: int = 3):
-        for i in range(multiplier):
-            for j in range(multiplier):
+                              color: int):
+        for i in range(self.wall_multiplier):
+            for j in range(self.wall_multiplier):
                 self.m.mlx_pixel_put(self.mlx_ptr, self.win_ptr,
                                      pixel_x + i, pixel_y + j, color)
 
@@ -39,8 +52,7 @@ class Graphics:
         delta_pixels = round(delta_pixels)
 
         while (delta_pixels):
-            self.m.mlx_pixel_put(self.mlx_ptr, self.win_ptr,
-                                 pixel_x, pixel_y, color)
+            self.draw_pixel_multiplied(pixel_x, pixel_y, color)
             pixel_x += delta_x
             pixel_y += delta_y
             delta_pixels -= 1
@@ -76,22 +88,25 @@ class Graphics:
     def display_maze(self, maze: Maze):
         initial_x: int = 10
         actual_y: int = 10
-        increment: int = 20
+        increment_x: int = int((self.win_width - 20) / maze.width)
+        increment_y: int = int((self.win_height - 20) / maze.height)
+        print(f"increment_x {increment_x}, increment_y {increment_y}")
 
         for i in range(maze.height):
             actual_x: int = initial_x
             for j in range(maze.width):
                 if maze.entry == (j, i):
-                    self.draw_pixel_multiplied(actual_x + 2,
-                                               actual_y + 2,
-                                               0xFF00FF00, increment - 3)
+                    self.draw_box(actual_x, actual_y, 0xFF00FF00,
+                                  increment_x,
+                                  increment_y)
                 elif maze.exit == (j, i):
-                    self.draw_pixel_multiplied(actual_x + 2,
-                                               actual_y + 2,
-                                               0xFFFF0000, increment - 3)
+                    self.draw_box(actual_x + self.wall_multiplier, actual_y +
+                                  self.wall_multiplier, 0xFFFF0000,
+                                  increment_x - self.wall_multiplier,
+                                  increment_y - self.wall_multiplier)
                 cell: Cell = maze.maze_map[i][j]
                 self.create_cell(
-                    actual_x, actual_y, actual_x + increment, actual_y +
-                    increment, cell.calculate_walls())
-                actual_x += increment
-            actual_y += increment
+                    actual_x, actual_y, actual_x + increment_x, actual_y +
+                    increment_y, cell.calculate_walls())
+                actual_x += increment_x
+            actual_y += increment_y
