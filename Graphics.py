@@ -2,9 +2,12 @@ from mlx import Mlx
 from math import sqrt
 from maze import Maze, Cell
 from screeninfo import get_monitors, Monitor
+from collections import deque
 
 
 class Graphics:
+    """Class for making the graphic representation of the """
+
     def __init__(self):
         self.m: Mlx = Mlx()
         self.mlx_ptr = self.m.mlx_init()
@@ -15,11 +18,39 @@ class Graphics:
             self.mlx_ptr, self.win_width, self.win_height, "Maze")
         self.wall_multiplier: int = 5
         self.m.mlx_hook(self.win_ptr, 33, 0, self.close_hook, self)
+        self.colors: deque[dict[int]] = deque([
+            {
+                "entry": 0xFFFF6B6B,
+                "exit": 0xFF4ECDC4,
+                "walls": 0xFFFFD93D,
+                "42": 0xFF1A535C
+            },
+            {
+                "entry": 0xFFFFADAD,
+                "exit": 0xFFCAFFBF,
+                "walls": 0xFFA0C4FF,
+                "42": 0xFFFFD6A5
+            },
+            {
+                "entry": 0xFF2E3440,
+                "exit": 0xFF88C0D0,
+                "walls": 0xFFA3BE8C,
+                "42": 0xFFEBCB8B
+            },
+            {
+                "entry": 0xFFE63946,
+                "exit": 0xFF457B9D,
+                "walls": 0xFF2A9D8F,
+                "42": 0xFFF4A261
+            }])
 
     @staticmethod
     def close_hook(self: "Graphics") -> int:
         self.m.mlx_loop_exit(self.mlx_ptr)
         return (1)
+
+    def rotate_colors(self) -> None:
+        self.colors.rotate()
 
     def loop(self) -> None:
         self.m.mlx_loop(self.mlx_ptr)
@@ -74,37 +105,64 @@ class Graphics:
         """
         if (walls >= 8):
             walls -= 8
-            self.draw_line(x1, y1, x1, y2)
+            self.draw_line(x1, y1, x1, y2, color=self.colors[0]["walls"])
         if (walls >= 4):
             walls -= 4
-            self.draw_line(x1, y2, x2, y2)
+            self.draw_line(x1, y2, x2, y2, color=self.colors[0]["walls"])
         if (walls >= 2):
             walls -= 2
-            self.draw_line(x2, y1, x2, y2)
+            self.draw_line(x2, y1, x2, y2, color=self.colors[0]["walls"])
         if (walls == 1):
-            self.draw_line(x1, y1, x2, y1)
+            self.draw_line(x1, y1, x2, y1, color=self.colors[0]["walls"])
         pass
+
+    def display_menu(self, maze: Maze):
+        print("=== A-Maze-ing ===")
+        print("1. Re-generate a new maze")
+        print("2. Show/Hide path from entry to exit")
+        print("3. Rotate maze colors")
+        print("4. Quit")
+
+        choice: int = 0
+        while (choice < 1 or choice > 4):
+            try:
+                choice = int(input("Choice? (1-4) "))
+                if (choice < 1 or choice > 4):
+                    print("The choice should be between 1 and 4")
+            except ValueError:
+                print("The input should be a number")
+                choice = 0
+        if choice == 1:
+            print("Functionality under construction")
+            self.display_menu(maze)
+        elif choice == 2:
+            print("Functionality under construction")
+            self.display_menu(maze)
+        elif choice == 3:
+            self.rotate_colors()
+            self.display_maze(maze)
+            self.display_menu(maze)
 
     def display_maze(self, maze: Maze):
         initial_x: int = 10
         actual_y: int = 10
         increment_x: int = int((self.win_width - 20) / maze.width)
         increment_y: int = int((self.win_height - 20) / maze.height)
-        print(f"increment_x {increment_x}, increment_y {increment_y}")
 
         for i in range(maze.height):
             actual_x: int = initial_x
             for j in range(maze.width):
                 if maze.entry == (j, i):
-                    self.draw_box(actual_x, actual_y, 0xFF00FF00, increment_x,
-                                  increment_y)
+                    self.draw_box(actual_x, actual_y, self.colors[0]["entry"],
+                                  increment_x, increment_y)
                 elif maze.exit == (j, i):
-                    self.draw_box(actual_x, actual_y, 0xFFFF0000, increment_x,
-                                  increment_y)
+                    self.draw_box(actual_x, actual_y, self.colors[0]["exit"],
+                                  increment_x, increment_y)
                 cell: Cell = maze.maze_map[i][j]
                 if cell.block_42:
-                    self.draw_box(actual_x, actual_y, 0xFFD3D3D3, increment_x,
-                                  increment_y)
+                    self.draw_box(
+                        actual_x, actual_y, self.colors[0]["42"],
+                        increment_x, increment_y)
                 self.create_cell(
                     actual_x, actual_y, actual_x + increment_x, actual_y +
                     increment_y, cell.calculate_walls())

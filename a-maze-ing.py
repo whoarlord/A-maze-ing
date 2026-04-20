@@ -33,7 +33,7 @@ def main():
     maze.print_map()
     graphics = Graphics()
     graphics.display_maze(maze)
-    graphics.loop()
+    graphics.display_menu(maze)
 
 
 if __name__ == "__main__":
