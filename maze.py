@@ -5,6 +5,7 @@ class Cell:
     def __init__(self):
         self.visited: bool = False
         self.block_42: bool = False
+        self.weight = 0
         self.N = 0
         self.S = 0
         self.E = 0
@@ -200,5 +201,19 @@ class Maze:
         for i in range(self.height):
             for j in range(self.width):
                 print(self.maze_map[i][j], end="")
+            print("")
+        print()
+
+    def is_exit(self, cell: tuple[int, int]) -> bool:
+        return self.exit == cell
+
+    def is_entry(self, cell: tuple[int, int]) -> bool:
+        return self.entry == cell
+
+    def print_wight_map(self):
+        print("Weight Map:")
+        for i in range(self.height):
+            for j in range(self.width):
+                print(self.maze_map[i][j].weight, end="")
             print("")
         print()
