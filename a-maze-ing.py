@@ -6,6 +6,7 @@ from typing import Any
 from maze import Maze
 from Prim import Prim
 from Graphics import Graphics
+import maze_solver
 
 
 def main():
@@ -33,6 +34,7 @@ def main():
     maze.print_map()
     graphics = Graphics()
     graphics.display_maze(maze)
+    maze_solver.solve_maze(maze)
     graphics.loop()
 
 

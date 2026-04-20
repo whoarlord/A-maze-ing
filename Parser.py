@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
 
 from errors import ParseError, PerfectError, InvalidValueError
-from typing import Any
+from typing import TypedDict
+
+
+class Config(TypedDict):
+
+    WIDTH: int
+    HEIGHT: int
+    ENTRY: tuple[int, int]
+    EXIT: tuple[int, int]
+    OUTPUT_FILE: str
+    PERFECT: bool
 
 
 class Parser:
 
-    def parse_line(self, line: str, dictionary: dict[str: Any]) -> None:
+    def parse_line(self, line: str, dictionary: Config) -> None:
 
         if "=" in line:
 
@@ -23,8 +33,13 @@ class Parser:
                     try:
                         number = int(value)
                         if number <= 0:
-                            raise InvalidValueError(line, number)
-                        dictionary.update({parameter: number})
+                            raise InvalidValueError(
+                                line, number, None, parameter)
+
+                        if parameter == "WIDTH":
+                            dictionary.update({parameter: number})
+                        else:
+                            dictionary.update({parameter: number})
 
                     except ValueError as e:
                         print(f"{e}")
@@ -45,7 +60,10 @@ class Parser:
                                 line, y_int, dictionary.get("HEIGHT"),
                                 "HEIGHT")
 
-                        dictionary.update({parameter: (x_int, y_int)})
+                        if parameter == "ENTRY":
+                            dictionary.update({parameter: (x_int, y_int)})
+                        else:
+                            dictionary.update({parameter: (x_int, y_int)})
 
                     except ValueError as e:
                         raise Exception(
