@@ -21,7 +21,7 @@ class Prim:
 
             stack.append((temp_x, temp_y))
         if not maze.perfect:
-            self.create_multiple_routes(maze)
+            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def check_neighbours_for_routes(
             self, maze: Maze, threshold: int, x: int, y: int):
