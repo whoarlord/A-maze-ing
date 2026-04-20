@@ -1,3 +1,6 @@
+from functools import lru_cache
+
+
 class Cell:
     def __init__(self):
         self.visited: bool = False
@@ -18,8 +21,7 @@ class Cell:
         self.block_42 = True
         self.cover_all()
 
-    def uncover_dir(self, visiting_cell: "Cell", dir: int) -> None:
-        visiting_cell.cover_all()
+    def uncover_dir_flex(self, visiting_cell: "Cell", dir: int) -> None:
         if dir == 0:
             self.N = 0
             visiting_cell.S = 0
@@ -34,6 +36,10 @@ class Cell:
             visiting_cell.E = 0
         else:
             raise ValueError("Unknow direction")
+
+    def uncover_dir(self, visiting_cell: "Cell", dir: int) -> None:
+        visiting_cell.cover_all()
+        self.uncover_dir_flex(visiting_cell, dir)
 
     def calculate_walls(self) -> int:
         return self.N * 1 + self.E * 2 + self.S * 4 + self.W * 8
@@ -86,6 +92,20 @@ class Maze:
             result.append(2)
         if (x - 1 >= 0 and not self.get_cell(x - 1, y).visited):
             result.append(3)
+        return result
+
+    def get_adyacents(self, x: int, y: int, checked_cells:
+                      list[tuple[int, int]]) -> list[tuple[int, int]]:
+        result: list[tuple[int, int]] = []
+        actual_cell: Cell = self.get_cell(x, y)
+        if not actual_cell.N and not (x, y - 1) in checked_cells:
+            result.append((x, y - 1))
+        if not actual_cell.S and not (x, y + 1) in checked_cells:
+            result.append((x, y + 1))
+        if not actual_cell.W and not (x - 1, y) in checked_cells:
+            result.append((x - 1, y))
+        if not actual_cell.E and not (x + 1, y) in checked_cells:
+            result.append((x + 1, y))
         return result
 
     def get_coord_by_dir(self, x: int, y: int, dir: int) -> tuple[int, int]:
@@ -158,6 +178,22 @@ class Maze:
                 moving_x += 1
             moving_y += 1
         return (0)
+
+    @lru_cache
+    def distance_between_cells(
+            self, x1: int, y1: int, x2: int, y2: int) -> int:
+        cells_list: list[tuple[int, int]] = [(x1, y1)]
+        checked_cells: list[tuple[int, int]] = []
+        distance: int = 0
+        while (len(cells_list)) > 0:
+            distance += 1
+            for i in range(len(cells_list)):
+                x, y = cells_list.pop(0)
+                cells_list.extend(self.get_adyacents(x, y, checked_cells))
+                checked_cells.append((x, y))
+            if (x2, y2) in cells_list:
+                break
+        return distance
 
     def print_map(self):
         print("Map:")
