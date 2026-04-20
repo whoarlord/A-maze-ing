@@ -16,7 +16,6 @@ class Graphics:
         return (1)
 
     def loop(self) -> None:
-        print("en el loop")
         self.m.mlx_loop(self.mlx_ptr)
         self.m.mlx_destroy_window(self.mlx_ptr, self.win_ptr)
 
@@ -38,18 +37,13 @@ class Graphics:
         pixel_x = x1
         pixel_y = y1
         delta_pixels = round(delta_pixels)
-        print(
-            f"delta_x: {delta_x}, delta_y: {delta_y},"
-            f"delta_pixels: {delta_pixels}")
 
         while (delta_pixels):
             self.m.mlx_pixel_put(self.mlx_ptr, self.win_ptr,
                                  pixel_x, pixel_y, color)
-            # self.draw_pixel_multiplied(pixel_x, pixel_y, color)
             pixel_x += delta_x
             pixel_y += delta_y
             delta_pixels -= 1
-        print("finish")
         self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
 
     def create_cell(self, x1: int, y1: int, x2: int, y2: int, walls: int):
@@ -67,19 +61,15 @@ class Graphics:
         north and east walls up
         """
         if (walls >= 8):
-            print(f"W; x1: {x1}, y1: {y1}, x2: {x1}, y2: {y2}")
             walls -= 8
             self.draw_line(x1, y1, x1, y2)
         if (walls >= 4):
-            print(f"S; x1: {x1}, y1: {y2}, x2: {x2}, y2: {y2}")
             walls -= 4
             self.draw_line(x1, y2, x2, y2)
         if (walls >= 2):
-            print(f"E; x1: {x2}, y1: {y1}, x2: {x2}, y2: {y2}")
             walls -= 2
             self.draw_line(x2, y1, x2, y2)
         if (walls == 1):
-            print(f"N; x1: {x1}, y1: {y1}, x2: {x2}, y2: {y1}")
             self.draw_line(x1, y1, x2, y1)
         pass
 
@@ -92,13 +82,13 @@ class Graphics:
             actual_x: int = initial_x
             for j in range(maze.width):
                 if maze.entry == (j, i):
-                    self.draw_pixel_multiplied(actual_x + 1,
-                                               actual_y + 1,
-                                               0xFF00FF00, increment - 1)
+                    self.draw_pixel_multiplied(actual_x + 2,
+                                               actual_y + 2,
+                                               0xFF00FF00, increment - 3)
                 elif maze.exit == (j, i):
-                    self.draw_pixel_multiplied(actual_x + 1,
-                                               actual_y + 1,
-                                               0xFFFF0000, increment - 1)
+                    self.draw_pixel_multiplied(actual_x + 2,
+                                               actual_y + 2,
+                                               0xFFFF0000, increment - 3)
                 cell: Cell = maze.maze_map[i][j]
                 self.create_cell(
                     actual_x, actual_y, actual_x + increment, actual_y +
