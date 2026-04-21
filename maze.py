@@ -1,4 +1,80 @@
 from functools import lru_cache
+from random import randint
+
+
+class Player:
+
+    def __init__(self, position: tuple[int, int]) -> None:
+        x, y = position
+        self.x = x
+        self.y = y
+        self.movements: list[str] = []
+
+    def can_move_to(self, direction: str, maze: "Maze") -> bool:
+
+        player_cell = maze.get_cell(self.x, self.y)
+        match direction:
+            case "E":
+                if not player_cell.has_wall("E"):
+                    return True
+                else:
+                    return False
+
+            case "W":
+                if not player_cell.has_wall("W"):
+                    return True
+                else:
+                    return False
+
+            case "N":
+                if not player_cell.has_wall("N"):
+                    return True
+                else:
+                    return False
+
+            case "S":
+                if not player_cell.has_wall("S"):
+                    return True
+                else:
+                    return False
+
+    def get_direction(self, coords: tuple[int, int]) -> str:
+
+        x, y = coords
+        if self.x < x:
+            return "E"
+        elif self.x > x:
+            return "W"
+        elif self.y < y:
+            return "S"
+        elif self.y > y:
+            return "N"
+
+    def move_to(self, direction: str) -> None:
+
+        match direction:
+            case "E":
+                self.x += 1
+                self.movements.append("E")
+
+            case "W":
+                self.x -= 1
+                self.movements.append("W")
+
+            case "N":
+                self.y -= 1
+                self.movements.append("N")
+
+            case "S":
+                self.y += 1
+                self.movements.append("S")
+
+    def get_last_movement(self) -> str:
+
+        if len(self.movements) > 0:
+            return self.movements[len(self.movements) - 1]
+        else:
+            return "No movements yet"
 
 
 class Cell:
@@ -44,6 +120,18 @@ class Cell:
 
     def calculate_walls(self) -> int:
         return self.N * 1 + self.E * 2 + self.S * 4 + self.W * 8
+
+    def has_wall(self, direction: str) -> bool:
+
+        match direction:
+            case "N":
+                return self.N == 1
+            case "E":
+                return self.E == 1
+            case "S":
+                return self.S == 1
+            case "W":
+                return self.W == 1
 
     def __str__(self):
         hexadeimal: str = "0123456789ABCDEF"
@@ -209,6 +297,64 @@ class Maze:
 
     def is_entry(self, cell: tuple[int, int]) -> bool:
         return self.entry == cell
+
+    def find_lowest_neighbour(self, cell: tuple[int, int],
+                              player: Player) -> tuple[int, int]:
+
+        x, y = cell
+        posible_moves: list[tuple[int, int]] = []
+        cel = self.get_cell(x, y)
+
+        if not cel.has_wall("N") and y > 0:
+            posible_moves.append((x, y-1))
+
+        if not cel.has_wall("S") and y < self.height - 1:
+            posible_moves.append((x, y+1))
+
+        if not cel.has_wall("E") and x < self.width - 1:
+            posible_moves.append((x+1, y))
+
+        if not cel.has_wall("W") and x > 0:
+            posible_moves.append((x-1, y))
+
+        return_x, return_y = posible_moves[0]
+        min_weight = self.get_cell(return_x, return_y).weight
+        for move in posible_moves:
+            m_x, m_y = move
+            if self.get_cell(m_x, m_y).weight > min_weight:
+                posible_moves.remove(move)
+
+        print(f"{posible_moves}")
+
+        if len(posible_moves) > 1:
+            player_move = player.get_last_movement()
+            match player_move:
+                case "N":
+                    for move in posible_moves:
+                        m_x, m_y = move
+                        if not (m_x == player.x and m_y == player.y - 1):
+                            posible_moves.remove(move)
+
+                case "S":
+                    for move in posible_moves:
+                        m_x, m_y = move
+                        if not (m_x == player.x and m_y == player.y + 1):
+                            posible_moves.remove(move)
+
+                case "E":
+                    for move in posible_moves:
+                        m_x, m_y = move
+                        if not (m_x == player.x + 1 and m_y == player.y):
+                            posible_moves.remove(move)
+
+                case "W":
+                    for move in posible_moves:
+                        m_x, m_y = move
+                        if not (m_x == player.x - 1 and m_y == player.y):
+                            posible_moves.remove(move)
+
+        return_x, return_y = posible_moves.pop(0)
+        return return_x, return_y
 
     def print_wight_map(self):
         print("Weight Map:")
