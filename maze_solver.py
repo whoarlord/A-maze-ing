@@ -76,6 +76,8 @@ def apply_floodfill_neighbours(cell: tuple[int, int], maze: Maze) -> None:
 
     x, y = cell
 
+    # print(f" ===== FloodFill on neighbours of cell: ({x}, {y}) ====== ")
+
     if (x+1) < maze.width and not maze.get_cell(x+1, y).visited and maze.get_cell(x, y).E == 0:
         apply_floodfill((x+1, y), maze)
 
@@ -95,33 +97,59 @@ def apply_floodfill(cell: tuple[int, int], maze: Maze) -> None:
 
     maze.get_cell(x, y).visited = True
 
+    # print(f"FloodFill on cell: ({x}, {y})")
+
     if (x+1) < maze.width and maze.get_cell(x, y).E == 0:
         cel = maze.get_cell(x+1, y)
+        # print(f"Cell ({x+1}, {y}) - Weight = {cel.weight}")
         if not cel.visited:
-            cel.weight = maze.get_cell(x, y).weight + 1
+            if cel.weight != 0:
+                cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            else:
+                cel.weight = maze.get_cell(x, y).weight + 1
         elif cel.weight > maze.get_cell(x, y).weight + 1:
             cel.weight = maze.get_cell(x, y).weight + 1
+            # print(f"Pasa por elif celda: ({x}, {y}) para rellenar {x+1}, {y}")
+        # maze.print_wight_map()
 
     if (x-1) >= 0 and maze.get_cell(x, y).W == 0:
         cel = maze.get_cell(x-1, y)
+        # print(f"Cell ({x-1}, {y}) - Weight = {cel.weight}")
         if not cel.visited:
-            cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            if cel.weight != 0:
+                cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            else:
+                cel.weight = maze.get_cell(x, y).weight + 1
         elif cel.weight > maze.get_cell(x, y).weight + 1:
             cel.weight = maze.get_cell(x, y).weight + 1
+            # print(f"Pasa por elif celda: ({x}, {y}) para rellenar {x-1}, {y}")
+        # maze.print_wight_map()
 
     if (y+1) < maze.height and maze.get_cell(x, y).S == 0:
         cel = maze.get_cell(x, y+1)
+        # print(f"Cell ({x}, {y+1}) - Weight = {cel.weight}")
         if not cel.visited:
-            cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            if cel.weight != 0:
+                cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            else:
+                cel.weight = maze.get_cell(x, y).weight + 1
         elif cel.weight > maze.get_cell(x, y).weight + 1:
             cel.weight = maze.get_cell(x, y).weight + 1
+            # print(f"Pasa por elif celda: ({x}, {y}) para rellenar {x}, {y+1}")
+        # maze.print_wight_map()
 
     if (y-1) >= 0 and maze.get_cell(x, y).N == 0:
         cel = maze.get_cell(x, y-1)
+        # print(f"Cell ({x}, {y-1}) - Weight = {cel.weight}")
         if not cel.visited:
-            cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            if cel.weight != 0:
+                cel.weight = min(cel.weight, maze.get_cell(x, y).weight + 1)
+            else:
+                cel.weight = maze.get_cell(x, y).weight + 1
         elif cel.weight > maze.get_cell(x, y).weight + 1:
             cel.weight = maze.get_cell(x, y).weight + 1
+            # print(f"Pasa por elif celda: ({x}, {y}) para rellenar {x}, {y-1}")
+        # maze.print_wight_map()
 
     apply_floodfill_neighbours(cell, maze)
 
@@ -155,8 +183,9 @@ def move_player(flood_maze: Maze, original_maze: Maze, player: Player) -> tuple[
     print(
         f"Updated walls of cell:{player.x}, {player.y}: N:{flood_maze.get_cell(player.x, player.y).N}, E:{flood_maze.get_cell(player.x, player.y).E}"
         f" S:{flood_maze.get_cell(player.x, player.y).S}, W:{flood_maze.get_cell(player.x, player.y).W}")
-    apply_floodfill(original_maze.exit, flood_maze)
+    all_weights_zero(flood_maze)
     all_not_visited(flood_maze)
+    apply_floodfill(original_maze.exit, flood_maze)
     print("Flood_maze with walls")
     flood_maze.print_wight_map()
     move_to_lowest(player, flood_maze)
@@ -169,6 +198,13 @@ def all_not_visited(maze: Maze) -> None:
     for i in range(maze.height):
         for j in range(maze.width):
             maze.get_cell(j, i).visited = False
+
+
+def all_weights_zero(maze: Maze) -> None:
+
+    for i in range(maze.height):
+        for j in range(maze.width):
+            maze.get_cell(j, i).weight = 0
 
 
 def floodfill_map(maze: Maze) -> None:
@@ -187,13 +223,5 @@ def floodfill_map(maze: Maze) -> None:
         x, y = move_player(flood_maze, maze, player)
         print(f"move_x={x}, move_y={y}; exit_x={exit_x}, exit_y={exit_y}")
 
-        x, y = move_player(flood_maze, maze, player)
-        print(f"move_x={x}, move_y={y}; exit_x={exit_x}, exit_y={exit_y}")
-
-        x, y = move_player(flood_maze, maze, player)
-        print(f"move_x={x}, move_y={y}; exit_x={exit_x}, exit_y={exit_y}")
-
-        break
-
-        """ if x == exit_x and y == exit_y:
-            break """
+        if x == exit_x and y == exit_y:
+            break

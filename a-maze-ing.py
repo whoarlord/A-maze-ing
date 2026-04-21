@@ -33,8 +33,8 @@ def main():
     prim.create_map(maze)
     graphics = Graphics(maze)
     # graphics.loop()
-    graphics.display_menu(maze)
     maze_solver.solve_maze(maze)
+    graphics.display_menu(maze)
 
 
 if __name__ == "__main__":
