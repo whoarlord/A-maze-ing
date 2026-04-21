@@ -34,6 +34,7 @@ def main():
     graphics = Graphics(maze)
     # graphics.loop()
     graphics.display_menu(maze)
+    maze_solver.solve_maze(maze)
 
 
 if __name__ == "__main__":
