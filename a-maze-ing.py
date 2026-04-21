@@ -31,11 +31,9 @@ def main():
     maze = Maze(**dictionary)
     prim = Prim()
     prim.create_map(maze)
-    maze.print_map()
-    # graphics = Graphics()
-    # graphics.display_maze(maze)
-    # graphics.display_menu(maze)
-    maze_solver.solve_maze(maze)
+    graphics = Graphics()
+    graphics.display_maze(maze)
+    graphics.display_menu(maze)
 
 
 if __name__ == "__main__":
