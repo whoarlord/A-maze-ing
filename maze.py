@@ -1,6 +1,3 @@
-from functools import lru_cache
-
-
 class Cell:
     def __init__(self):
         self.visited: bool = False
@@ -180,7 +177,6 @@ class Maze:
             moving_y += 1
         return (0)
 
-    @lru_cache
     def distance_between_cells(
             self, x1: int, y1: int, x2: int, y2: int) -> int:
         cells_list: list[tuple[int, int]] = [(x1, y1)]

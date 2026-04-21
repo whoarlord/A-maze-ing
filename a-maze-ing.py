@@ -31,8 +31,9 @@ def main():
     maze = Maze(**dictionary)
     prim = Prim()
     prim.create_map(maze)
-    graphics = Graphics()
+    graphics = Graphics(maze.height, maze.width)
     graphics.display_maze(maze)
+    # graphics.loop()
     graphics.display_menu(maze)
 
 
