@@ -20,44 +20,49 @@ class Graphics:
     - colors (deque[dict[int]]): the set of colors for the maze
     """
 
-    def __init__(self):
+    colors: deque[dict[int]] = deque([
+        {
+            "entry": 0xFFFF6B6B,
+            "exit": 0xFF4ECDC4,
+            "walls": 0xFFFFD93D,
+            "42": 0xFF1A535C
+        },
+        {
+            "entry": 0xFFFFADAD,
+            "exit": 0xFFCAFFBF,
+            "walls": 0xFFA0C4FF,
+            "42": 0xFFFFD6A5
+        },
+        {
+            "entry": 0xFF2E3440,
+            "exit": 0xFF88C0D0,
+            "walls": 0xFFA3BE8C,
+            "42": 0xFFEBCB8B
+        },
+        {
+            "entry": 0xFFE63946,
+            "exit": 0xFF457B9D,
+            "walls": 0xFF2A9D8F,
+            "42": 0xFFF4A261
+        }])
+
+    def __init__(self, maze: Maze):
         self.m: Mlx = Mlx()
         self.mlx_ptr = self.m.mlx_init()
         monitor: Monitor = get_monitors()[0]
         self.win_height: int = int(monitor.height * 2 / 3)
         self.win_width: int = int(monitor.width * 2 / 3)
-        self.win_ptr = self.m.mlx_new_window(
-            self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
         self.maze_img_ptr = self.m.mlx_new_image(
             self.mlx_ptr, self.win_width, self.win_height)
         self.maze_buffer = self.m.mlx_get_data_addr(self.maze_img_ptr)
         self.wall_multiplier: int = 1
+        self.display_maze(maze)
+        self.win_ptr = self.m.mlx_new_window(
+            self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
+        self.m.mlx_put_image_to_window(
+            self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+        self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
         self.m.mlx_hook(self.win_ptr, 33, 0, self.close_hook, self)
-        self.colors: deque[dict[int]] = deque([
-            {
-                "entry": 0xFFFF6B6B,
-                "exit": 0xFF4ECDC4,
-                "walls": 0xFFFFD93D,
-                "42": 0xFF1A535C
-            },
-            {
-                "entry": 0xFFFFADAD,
-                "exit": 0xFFCAFFBF,
-                "walls": 0xFFA0C4FF,
-                "42": 0xFFFFD6A5
-            },
-            {
-                "entry": 0xFF2E3440,
-                "exit": 0xFF88C0D0,
-                "walls": 0xFFA3BE8C,
-                "42": 0xFFEBCB8B
-            },
-            {
-                "entry": 0xFFE63946,
-                "exit": 0xFF457B9D,
-                "walls": 0xFF2A9D8F,
-                "42": 0xFFF4A261
-            }])
 
     @staticmethod
     def close_hook(self: "Graphics") -> int:
@@ -211,6 +216,9 @@ class Graphics:
         elif choice == 3:
             self.rotate_colors()
             self.display_maze(maze)
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+            self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
             self.display_menu(maze)
 
     def display_maze(self, maze: Maze):
@@ -250,6 +258,3 @@ class Graphics:
                     increment_y, cell.calculate_walls())
                 actual_x += increment_x
             actual_y += increment_y
-        self.m.mlx_put_image_to_window(
-            self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
-        self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
