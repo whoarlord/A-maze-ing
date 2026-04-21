@@ -55,7 +55,7 @@ class Graphics:
         self.maze_img_ptr = self.m.mlx_new_image(
             self.mlx_ptr, self.win_width, self.win_height)
         self.maze_buffer = self.m.mlx_get_data_addr(self.maze_img_ptr)
-        self.wall_multiplier: int = 1
+        self.wall_multiplier: int = 5
         self.display_maze(maze)
         self.win_ptr = self.m.mlx_new_window(
             self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
@@ -236,8 +236,10 @@ class Graphics:
         """
         initial_x: int = 0
         actual_y: int = 0
-        increment_x: int = int(((self.win_width) / maze.width))
-        increment_y: int = int((self.win_height) / maze.height)
+        increment_x: int = int(
+            ((self.win_width - self.wall_multiplier) / maze.width))
+        increment_y: int = int(
+            (self.win_height - self.wall_multiplier) / maze.height)
 
         for i in range(maze.height):
             actual_x: int = initial_x
