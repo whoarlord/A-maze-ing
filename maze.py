@@ -291,13 +291,13 @@ class Maze:
                 break
         return distance
 
-    def print_map(self):
-        print("Map:")
+    def map_to_str(self) -> str:
+        result: str = ""
         for i in range(self.height):
             for j in range(self.width):
-                print(self.maze_map[i][j], end="")
-            print("")
-        print()
+                result += self.maze_map[i][j]
+            result += "\n"
+        result += "\n"
 
     def is_exit(self, cell: tuple[int, int]) -> bool:
         return self.exit == cell
@@ -370,3 +370,10 @@ class Maze:
                 print(self.maze_map[i][j].weight, " ", end="")
             print("")
         print()
+
+    def result_to_output(self, solution: str):
+        with open(self.output_file, "x") as f:
+            f.write(self.map_to_str())
+            f.write(f"{self.entry[0]},{self.entry[1]}")
+            f.write(f"{self.exit[0]},{self.exit[1]}")
+            f.write(solution)
