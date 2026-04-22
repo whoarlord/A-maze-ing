@@ -6,7 +6,9 @@ def solve_maze(maze: Maze) -> None:
     floodfill_map(maze)
 
 
-def apply_floodfill_neighbours_start(cell: tuple[int, int], maze: Maze) -> None:
+def apply_floodfill_neighbours_start(
+        cell: tuple[int, int],
+        maze: Maze) -> None:
 
     x, y = cell
 
@@ -221,8 +223,9 @@ def all_weights_zero(maze: Maze) -> None:
 
 def floodfill_map(maze: Maze) -> None:
 
-    flood_maze = Maze(maze.width, maze.height, maze.entry,
-                      maze.exit, maze.output_file, maze.perfect)
+    flood_maze = Maze(maze.width, maze.height, maze.entry, maze.exit,
+                      maze.output_file, maze.perfect, maze.animation,
+                      maze.algorithm)
     apply_floodfill_start(maze.exit, flood_maze)
     all_not_visited(flood_maze)
 
