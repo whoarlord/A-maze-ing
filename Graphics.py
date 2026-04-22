@@ -58,6 +58,7 @@ class Graphics:
         self.maze_buffer = self.m.mlx_get_data_addr(self.maze_img_ptr)
         self.wall_multiplier: int = 5
         self.display_maze(maze)
+        sleep(0.1)
         self.win_ptr = self.m.mlx_new_window(
             self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
         sleep(0.1)

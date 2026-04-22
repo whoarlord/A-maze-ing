@@ -1,5 +1,5 @@
 from functools import lru_cache
-from random import randint
+from functools import reduce
 
 
 class Player:
@@ -75,6 +75,11 @@ class Player:
             return self.movements[len(self.movements) - 1]
         else:
             return "No movements yet"
+
+    def print_path(self) -> None:
+
+        for elem in self.movements:
+            print(f"{elem}", end="")
 
 
 class Cell:
@@ -304,31 +309,28 @@ class Maze:
                               player: Player) -> tuple[int, int]:
 
         x, y = cell
-        posible_moves: list[tuple[int, int]] = []
+        posible_moves: dict[tuple[int, int], int] = {}
         cel = self.get_cell(x, y)
 
         if not cel.has_wall("N") and y > 0:
-            posible_moves.append((x, y-1))
+            posible_moves.update({(x, y-1): self.get_cell(x, y-1).weight})
 
         if not cel.has_wall("S") and y < self.height - 1:
-            posible_moves.append((x, y+1))
+            posible_moves.update({(x, y+1): self.get_cell(x, y+1).weight})
 
         if not cel.has_wall("E") and x < self.width - 1:
-            posible_moves.append((x+1, y))
+            posible_moves.update({(x + 1, y): self.get_cell(x+1, y).weight})
 
         if not cel.has_wall("W") and x > 0:
-            posible_moves.append((x-1, y))
+            posible_moves.update({(x-1, y): self.get_cell(x-1, y).weight})
 
-        return_x, return_y = posible_moves[0]
-        min_weight = self.get_cell(return_x, return_y).weight
-        for move in posible_moves:
-            m_x, m_y = move
-            if self.get_cell(m_x, m_y).weight > min_weight:
-                posible_moves.remove(move)
+        min_weight = reduce(min, posible_moves.values())
 
-        print(f"{posible_moves}")
+        result = {
+            key: value for key, value in posible_moves.items()
+            if value <= min_weight}
 
-        if len(posible_moves) > 1:
+        """ if len(posible_moves) > 1:
             player_move = player.get_last_movement()
             match player_move:
                 case "N":
@@ -353,15 +355,18 @@ class Maze:
                     for move in posible_moves:
                         m_x, m_y = move
                         if not (m_x == player.x - 1 and m_y == player.y):
-                            posible_moves.remove(move)
+                            posible_moves.remove(move) """
 
-        return_x, return_y = posible_moves.pop(0)
+        return_x, return_y = result.popitem()[0]
         return return_x, return_y
 
     def print_wight_map(self):
+
+        # Metodo de testeo, luego borrar
+
         print("Weight Map:")
         for i in range(self.height):
             for j in range(self.width):
-                print(self.maze_map[i][j].weight, end="")
+                print(self.maze_map[i][j].weight, " ", end="")
             print("")
         print()
