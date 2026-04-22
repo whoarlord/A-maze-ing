@@ -142,13 +142,16 @@ class Maze:
 
     def __init__(
             self, width: int, height: int, entry: tuple[int, int],
-            exit: tuple[int, int], output_file: str, perfect: bool):
+            exit: tuple[int, int],
+            output_file: str, perfect: bool, animation: bool, algorithm: str):
         self.width = width
         self.height = height
         self.entry = entry
         self.exit = exit
         self.output_file = output_file
         self.perfect = perfect
+        self.animation = animation
+        self.algorithm = algorithm
         self.maze_map: list[list[Cell]] = self.create_map()
         if (self.create_42()):
             self.maze_map = self.create_map()

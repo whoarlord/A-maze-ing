@@ -4,7 +4,7 @@ from Parser import Parser
 from errors import ParseError, PerfectError, InvalidValueError
 from typing import Any
 from maze import Maze
-from Prim import Prim
+from Algorithms import Algorithms
 from Graphics import Graphics
 import maze_solver
 
@@ -29,8 +29,8 @@ def main():
         map(lambda item: (item[0].lower(), item[1]),
             dictionary.items()))
     maze = Maze(**dictionary)
-    prim = Prim()
-    prim.create_map(maze)
+    algorithms = Algorithms()
+    algorithms.create_map(maze)
     graphics = Graphics(maze)
     # graphics.loop()
     graphics.display_menu(maze)

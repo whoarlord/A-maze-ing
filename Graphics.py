@@ -3,6 +3,7 @@ from math import sqrt
 from maze import Maze, Cell
 from screeninfo import get_monitors, Monitor
 from collections import deque
+from time import sleep
 
 
 class Graphics:
@@ -59,6 +60,7 @@ class Graphics:
         self.display_maze(maze)
         self.win_ptr = self.m.mlx_new_window(
             self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
+        sleep(0.1)
         self.m.mlx_put_image_to_window(
             self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
         self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
