@@ -248,3 +248,4 @@ def floodfill_map(maze: Maze) -> None:
             player.print_path()
             print("\n")
             break
+    maze.result_to_output(player.path_tostring())

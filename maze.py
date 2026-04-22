@@ -303,9 +303,10 @@ class Maze:
         result: str = ""
         for i in range(self.height):
             for j in range(self.width):
-                result += self.maze_map[i][j]
+                result += self.maze_map[i][j].__str__()
             result += "\n"
         result += "\n"
+        return result
 
     def is_exit(self, cell: tuple[int, int]) -> bool:
         return self.exit == cell
@@ -382,6 +383,6 @@ class Maze:
     def result_to_output(self, solution: str):
         with open(self.output_file, "x") as f:
             f.write(self.map_to_str())
-            f.write(f"{self.entry[0]},{self.entry[1]}")
-            f.write(f"{self.exit[0]},{self.exit[1]}")
-            f.write(solution)
+            f.write(f"{self.entry[0]},{self.entry[1]}\n")
+            f.write(f"{self.exit[0]},{self.exit[1]}\n")
+            f.write(f"{solution}\n")
