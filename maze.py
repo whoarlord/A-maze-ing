@@ -81,6 +81,14 @@ class Player:
         for elem in self.movements:
             print(f"{elem}", end="")
 
+    def path_tostring(self) -> str:
+
+        string = ""
+        for elem in self.movements:
+            string += elem
+
+        return string
+
 
 class Cell:
     def __init__(self):
