@@ -160,35 +160,47 @@ def update_walls(
 
     if not player.can_move_to("N", original_maze):
         flood_maze.get_cell(player.x, player.y).N = 1
+        if player.y > 0:
+            flood_maze.get_cell(player.x, player.y-1).S = 1
+
     if not player.can_move_to("S", original_maze):
         flood_maze.get_cell(player.x, player.y).S = 1
+        if player.y < flood_maze.height - 1:
+            flood_maze.get_cell(player.x, player.y+1).N = 1
+
     if not player.can_move_to("W", original_maze):
         flood_maze.get_cell(player.x, player.y).W = 1
+        if player.x > 0:
+            flood_maze.get_cell(player.x - 1, player.y).E = 1
+
     if not player.can_move_to("E", original_maze):
         flood_maze.get_cell(player.x, player.y).E = 1
+        if player.x < flood_maze.width - 1:
+            flood_maze.get_cell(player.x + 1, player.y).W = 1
 
 
 def move_to_lowest(player: Player, flood_maze: Maze) -> None:
 
     x, y = flood_maze.find_lowest_neighbour((player.x, player.y), player)
-    print(f"Direction to move: {player.get_direction((x, y))}")
+    print(f"Move to: {(x, y)} from: {(player.x, player.y)}")
     player.move_to(player.get_direction((x, y)))
-    print(f"Player pos after move: X={player.x}, Y={player.y}")
 
 
 def move_player(flood_maze: Maze, original_maze: Maze, player: Player) -> tuple[int, int]:
 
-    print("Funcion move_player")
     update_walls(player, original_maze, flood_maze)
-    print(
+    """ print(
         f"Updated walls of cell:{player.x}, {player.y}: N:{flood_maze.get_cell(player.x, player.y).N}, E:{flood_maze.get_cell(player.x, player.y).E}"
-        f" S:{flood_maze.get_cell(player.x, player.y).S}, W:{flood_maze.get_cell(player.x, player.y).W}")
+        f" S:{flood_maze.get_cell(player.x, player.y).S}, W:{flood_maze.get_cell(player.x, player.y).W}") """
     all_weights_zero(flood_maze)
     all_not_visited(flood_maze)
+    """ print(" ===== Before floodFill: ====== ")
+    flood_maze.print_wight_map() """
     apply_floodfill(original_maze.exit, flood_maze)
-    print("Flood_maze with walls")
-    flood_maze.print_wight_map()
     move_to_lowest(player, flood_maze)
+
+    print(" ===== After floodFill: ====== ")
+    flood_maze.print_wight_map()
 
     return (player.x, player.y)
 
@@ -219,9 +231,17 @@ def floodfill_map(maze: Maze) -> None:
     player = Player(maze.entry)
 
     exit_x, exit_y = maze.exit
+    paso = 0
+
     while True:
+        print(f"Aplicando floodFill, vuelta: {paso}")
         x, y = move_player(flood_maze, maze, player)
-        print(f"move_x={x}, move_y={y}; exit_x={exit_x}, exit_y={exit_y}")
+
+        paso += 1
 
         if x == exit_x and y == exit_y:
+            print(f"A path has been found from {maze.entry} to {maze.exit}")
+            print("The path is the folowing: ", end="")
+            player.print_path()
+            print("\n")
             break
