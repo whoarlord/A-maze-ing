@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-from errors import ParseError, PerfectError, InvalidValueError
+from errors import (ParseError, PerfectError,
+                    InvalidValueError, DisplayModeError, AlgorithmError)
 from typing import TypedDict
 
 
@@ -82,6 +83,18 @@ class Parser:
                     else:
                         raise PerfectError(line)
 
+                case "DISPLAY_MODE":
+                    if value == "Normal":
+                        dictionary.update({"Animation": False})
+                    elif value == "Animated":
+                        dictionary.update({"Animation": True})
+                    else:
+                        raise DisplayModeError(line)
+                case "ALGORITHM":
+                    if value == "kruskal" or value == "prim":
+                        dictionary.update({parameter: value})
+                    else:
+                        raise AlgorithmError(line)
                 case _:
                     raise Exception(f"Unknown value on line: {line}")
         else:
