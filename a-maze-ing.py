@@ -25,6 +25,7 @@ def main():
                 print("An error has been found on the configuration file, "
                       "the program will now close.")
                 exit(1)
+    dictionary = parser.complete_dictionary(dictionary)
     dictionary = dict(
         map(lambda item: (item[0].lower(), item[1]),
             dictionary.items()))
@@ -32,9 +33,8 @@ def main():
     algorithms = Algorithms()
     algorithms.create_map(maze)
     graphics = Graphics(maze)
-    # graphics.loop()
     maze_solver.solve_maze(maze)
-    graphics.display_menu(maze)
+    graphics.display_menu(maze, algorithms)
 
 
 if __name__ == "__main__":

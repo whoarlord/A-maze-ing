@@ -45,3 +45,9 @@ class InvalidValueError(Exception):
         super().__init__(
             f"Error on line: '{line}'. The value {value}  is incorrect." +
             message)
+
+
+class SeedError(Exception):
+    def __init__(self, line: str) -> None:
+        super().__init__(
+            f"Error on line: '{line}'. the value must be superior than 0")

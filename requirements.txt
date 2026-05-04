@@ -1,2 +1,2 @@
-mlx_CLXV/mlx-2.2-py3-none-any.whl
+mlx-2.2-py3-none-any.whl
 screeninfo
