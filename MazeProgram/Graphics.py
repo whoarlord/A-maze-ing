@@ -19,6 +19,8 @@ class Graphics:
     - win_ptr: A pointer to the window we are gonna display
     - maze_img_ptr: A pointer to the image containing the maze
     - maze_buffer: The buffer of the maze image
+    - route_img_ptr: A pointer to the image containing the route
+    - route_buffer: The buffer of the route image
     - wall_multiplier (int): the number for making the walls thicker
     - colors (deque[dict[int]]): the set of colors for the maze
     """

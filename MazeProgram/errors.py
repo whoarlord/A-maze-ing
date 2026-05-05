@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 
 class ParseError(Exception):
+    """Exception for parsing errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
 
     def __init__(self, line: str) -> None:
         super().__init__(
@@ -9,6 +14,11 @@ class ParseError(Exception):
 
 
 class DisplayModeError(Exception):
+    """Exception for Display mode parameter errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
 
     def __init__(self, line: str) -> None:
         super().__init__(
@@ -17,6 +27,11 @@ class DisplayModeError(Exception):
 
 
 class PerfectError(Exception):
+    """Exception for Perfect parameter errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
 
     def __init__(self, line: str) -> None:
         super().__init__(
@@ -25,6 +40,11 @@ class PerfectError(Exception):
 
 
 class AlgorithmError(Exception):
+    """Exception for Algorithm parameter errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
 
     def __init__(self, line: str) -> None:
         super().__init__(
@@ -33,6 +53,11 @@ class AlgorithmError(Exception):
 
 
 class InvalidValueError(Exception):
+    """Exception for Invalid Value errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
 
     def __init__(
             self, line: str, value: int, limit, limit_name: str) -> None:
@@ -48,6 +73,12 @@ class InvalidValueError(Exception):
 
 
 class SeedError(Exception):
+    """Exception for Seed parameter errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
+
     def __init__(self, line: str) -> None:
         super().__init__(
             f"Error on line: '{line}'. the value must be superior than 0")
