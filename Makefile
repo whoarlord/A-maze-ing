@@ -1,4 +1,4 @@
-MAP=config.txt
+MAP=MazeProgram/config.txt
 DEBUGGER= -m pdb
 
 VIRTUALENV= MazeEnv
@@ -7,9 +7,9 @@ PIP=$(VIRTUALENV)/bin/pip
 
 MINILIBX=mlx_CLXV
 MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
-DEPENDENCIES=requirements.txt
+DEPENDENCIES=MazeProgram/requirements.txt
 
-MAIN=a-maze-ing.py
+MAIN=MazeProgram/a_maze_ing.py
 
 TOCLEAN=.mypy_cache
 
@@ -38,11 +38,11 @@ clean:
 	rm -rf $(TOCLEAN)
 
 lint:
-	flake8 .
-	mypy .  $(MYPYFLAGS)
+	flake8 MazeProgram
+	mypy MazeProgram  $(MYPYFLAGS)
 
 lint-strict:
-	flake8 .
-	mypy . --strict
+	flake8 MazeProgram
+	mypy MazeProgram --strict
 
 SILENT: all install run debug env clean lint lint-strict
