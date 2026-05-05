@@ -6,25 +6,29 @@ from typing import Any
 from maze import Maze
 from Algorithms import Algorithms
 from Graphics import Graphics
-import maze_solver
+import maze_solver as maze_solver
+import sys
 
 
 def main():
 
     parser = Parser()
     dictionary: dict[str: Any] = {}
+    argc: int = len(sys.argv)
 
-    with open("config.txt", "r") as file:
-        for line in file.readlines():
-            try:
+    try:
+        if (argc != 2):
+            raise Exception(
+                "a config file must be given and only one config file")
+        with open(sys.argv[1], "r") as file:
+            for line in file.readlines():
                 parser.parse_line(line.strip(), dictionary)
-
-            except (ParseError, PerfectError, InvalidValueError,
-                    Exception) as e:
-                print(f"{e}")
-                print("An error has been found on the configuration file, "
-                      "the program will now close.")
-                exit(1)
+    except (ParseError, PerfectError, InvalidValueError,
+            Exception) as e:
+        print(f"{e}")
+        print("An error has been found on the configuration file, "
+              "the program will now close.")
+        exit(1)
     dictionary = parser.complete_dictionary(dictionary)
     dictionary = dict(
         map(lambda item: (item[0].lower(), item[1]),
