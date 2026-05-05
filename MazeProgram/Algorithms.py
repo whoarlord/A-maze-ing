@@ -12,7 +12,6 @@ class Algorithms:
 
         Args:
         - maze (Maze): the object with the specified configuration of the maze
-
         """
         if maze.seed <= 0:
             self.create_seed(maze)
@@ -108,7 +107,8 @@ class Algorithms:
         return (0)
 
     def not_same_group_cells(
-            self, maze: Maze, x: int, y: int, i: int, cell_list: list[int],
+            self, maze: Maze, x: int, y: int, i: int,
+            cell_list: list[tuple[int, int]],
             cell_group: list[int]) -> list[int]:
         """Function for checking adyacents cells group
 
@@ -121,7 +121,13 @@ class Algorithms:
         - x (int): the x coordinate of the actual cell in the maze
         - y (int): the y coordinate of the actual cell in the maze
         - i (int): the index of the actual cell group at the cell_group
-        - cell_list (list[int]): the list
+        - cell_list (list[tuple[int, int]]): the list with the tuples
+        corresponding to the coordinates of each cell
+        - cell_group (list[int]): the list containing the group of each cell
+
+        Returns:
+        - directions (list[int]): the list with the posible directions to
+        destroy walls
         """
         directions: list[int] = []
         if (y - 1 >= 0
@@ -180,13 +186,20 @@ class Algorithms:
             self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def check_neighbours_for_routes(
-            self, maze: Maze, threshold: int, x: int, y: int):
+            self, maze: Maze, threshold: int, x: int, y: int) -> None:
         """Checks the distance between a cell and their adyacent
 
         This function receive a position of a cell a maze where the cell is
         and a threshold and checks if a specific cell is further from an
         adyacent cell than the threshold and destroys the wall between them
         to make an non perfect maze
+
+        Args:
+        - maze (Maze): the object representing the maze is gonna be created
+        - threshold (int): the threshold to make decisions about destroying
+        the walls
+        - x (int): the x coordinate of the actual cell
+        - y (int): the y coordinate fo the actual cell
         """
         if (y - 1 >= 0 and not maze.get_cell(x, y - 1).block_42
                 and maze.distance_between_cells(x, y, x, y - 1)

@@ -137,7 +137,8 @@ class Graphics:
                 self.put_pixels_at_img(pixel_x + j, pixel_y + i, color)
 
     def draw_line(
-            self, x1: int, y1: int, x2: int, y2: int, color: int = 0xFFFFFFFF) -> None:
+            self, x1: int, y1: int, x2: int, y2: int,
+            color: int = 0xFFFFFFFF) -> None:
         """Main function for drawing lines
 
         Args:
