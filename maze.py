@@ -166,12 +166,6 @@ class Maze:
         self.animation = animation
         self.algorithm = algorithm
         self.seed = seed
-        if animation is None:
-            self.animation = "Normal"
-        if algorithm is None:
-            self.algorithm = "Prim"
-        if seed is None:
-            self.seed = 0
         self.maze_map: list[list[Cell]] = self.create_map()
         if (self.create_42()):
             self.maze_map = self.create_map()

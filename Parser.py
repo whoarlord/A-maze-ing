@@ -22,9 +22,11 @@ class Parser:
 
         Args:
         - line (str): the line which is being readed from the config file
-        - dictionary (Config): the dictionary representing the parameters of the maze
+        - dictionary (Config): the dictionary representing the parameters of
+        the maze
 
-        This function receive a line and checks if the format and values of the line are correct
+        This function receive a line and checks if the format and values of
+        the line are correct
         """
 
         if "=" in line:
@@ -61,10 +63,10 @@ class Parser:
                         x_int = int(x)
                         y_int = int(y)
 
-                        if x_int < 0 or x_int > dictionary.get("WIDTH"):
+                        if x_int < 0 or x_int >= dictionary.get("WIDTH", 0):
                             raise InvalidValueError(
                                 line, x_int, dictionary.get("WIDTH"), "WIDTH")
-                        elif y_int < 0 or y_int > dictionary.get("HEIGHT"):
+                        elif y_int < 0 or y_int >= dictionary.get("HEIGHT", 0):
                             raise InvalidValueError(
                                 line, y_int, dictionary.get("HEIGHT"),
                                 "HEIGHT")

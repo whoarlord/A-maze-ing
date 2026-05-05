@@ -33,6 +33,19 @@ class Algorithms:
         seed(number)
 
     def create_map_kruskal(self, maze: Maze) -> None:
+        """Function for creating a map using the kruskal algorithm
+
+        This function put up all the walls of the maze and then it gives to
+        each of them a group, the objective is to change the group of all the
+        cells by destroying walls.
+
+        It selects a random direction from one cell to an adyacent cell which
+        is not at the same group and destroys the wall between them changing
+        all the cells group to the same group
+
+        Args:
+        - maze (Maze): the class where the maze is gonna be placed
+        """
         print("Executing kruskal algorithm\n")
         cell_list: list[tuple[int, int]] = []
         cell_group: list[int] = []
@@ -97,6 +110,19 @@ class Algorithms:
     def not_same_group_cells(
             self, maze: Maze, x: int, y: int, i: int, cell_list: list[int],
             cell_group: list[int]) -> list[int]:
+        """Function for checking adyacents cells group
+
+        This function checks if adyacents cells are from a diferent group
+        and if they are it adds that direction to the list so the main
+        kruskal function can choose one direction randomly
+
+        Args:
+        - maze (Maze): the object representing the maze is gonna be created
+        - x (int): the x coordinate of the actual cell in the maze
+        - y (int): the y coordinate of the actual cell in the maze
+        - i (int): the index of the actual cell group at the cell_group
+        - cell_list (list[int]): the list
+        """
         directions: list[int] = []
         if (y - 1 >= 0
                 and self.get_group_from_cell(x, y - 1, cell_group, cell_list)

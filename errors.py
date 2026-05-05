@@ -37,8 +37,8 @@ class InvalidValueError(Exception):
     def __init__(
             self, line: str, value: int, limit, limit_name: str) -> None:
 
-        if value > limit:
-            message = f" The value: {value} can't be bigger than the {
+        if value >= limit:
+            message = f" The value: {value} can't be bigger or equal than the {
                 limit_name}."
         elif value < 0:
             message = f" The value: {value} can't be smaller than 0."
