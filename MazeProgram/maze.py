@@ -169,6 +169,7 @@ class Maze:
         self.maze_map: list[list[Cell]] = self.create_map()
         if (self.create_42()):
             self.maze_map = self.create_map()
+        self.route: str
 
     def create_map(self) -> list[list[Cell]]:
         result: list[list[Cell]] = []
@@ -388,6 +389,7 @@ class Maze:
         print()
 
     def result_to_output(self, solution: str):
+        self.route = solution
         with open(self.output_file, "w") as f:
             f.write(self.map_to_str())
             f.write(f"{self.entry[0]},{self.entry[1]}\n")

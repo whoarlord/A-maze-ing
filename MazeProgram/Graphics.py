@@ -58,9 +58,13 @@ class Graphics:
         self.maze_img_ptr = self.m.mlx_new_image(
             self.mlx_ptr, self.win_width, self.win_height)
         self.maze_buffer = self.m.mlx_get_data_addr(self.maze_img_ptr)
+        self.route_img_ptr = self.m.mlx_new_image(
+            self.mlx_ptr, self.win_width, self.win_height)
+        self.route_buffer = self.m.mlx_get_data_addr(self.route_img_ptr)
         self.wall_multiplier: int = 5
         self.generate_black_window()
         self.display_maze(maze)
+        self.display_route(maze)
         self.win_ptr = self.m.mlx_new_window(
             self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
         self.m.mlx_put_image_to_window(
