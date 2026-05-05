@@ -28,25 +28,29 @@ class Graphics:
             "entry": 0xFFFF6B6B,
             "exit": 0xFF4ECDC4,
             "walls": 0xFFFFD93D,
-            "42": 0xFF1A535C
+            "42": 0xFF1A535C,
+            "route": 0xFFFFFFFF
         },
         {
             "entry": 0xFFFFADAD,
             "exit": 0xFFCAFFBF,
             "walls": 0xFFA0C4FF,
-            "42": 0xFFFFD6A5
+            "42": 0xFFFFD6A5,
+            "route": 0xFF6A4C93
         },
         {
             "entry": 0xFF2E3440,
             "exit": 0xFF88C0D0,
             "walls": 0xFFA3BE8C,
-            "42": 0xFFEBCB8B
+            "42": 0xFFEBCB8B,
+            "route": 0xFFFF00FF
         },
         {
             "entry": 0xFFE63946,
             "exit": 0xFF457B9D,
             "walls": 0xFF2A9D8F,
-            "42": 0xFFF4A261
+            "42": 0xFFF4A261,
+            "route": 0xFF00FFFF
         }])
 
     def __init__(self, maze: Maze):
@@ -61,6 +65,7 @@ class Graphics:
         self.route_img_ptr = self.m.mlx_new_image(
             self.mlx_ptr, self.win_width, self.win_height)
         self.route_buffer = self.m.mlx_get_data_addr(self.route_img_ptr)
+        self.route_visible: bool = False
         self.wall_multiplier: int = 5
         self.generate_black_window()
         self.display_maze(maze)
@@ -78,7 +83,13 @@ class Graphics:
         """This function generate a completely black window"""
         for i in range(self.win_height):
             for j in range(self.win_width):
-                self.put_pixels_at_img(j, i, 0x00000000)
+                self.put_pixels_at_img(j, i, 0x00000000, self.maze_buffer)
+
+    def generate_invisible_window(self) -> None:
+        """This function generate a completely invisible window"""
+        for i in range(self.win_height):
+            for j in range(self.win_width):
+                self.put_pixels_at_img(j, i, 0x00000000, self.route_buffer)
 
     def close_hook(self, param: Any) -> int:
         """Hook for exiting the loop"""
@@ -99,7 +110,9 @@ class Graphics:
         self.colors.rotate()
 
     def put_pixels_at_img(
-            self, pixel_x: int, pixel_y: int, color: int) -> None:
+            self, pixel_x: int, pixel_y: int, color: int,
+            buffer: tuple[memoryview,
+                          int, int, int]) -> None:
         """Function for putting specific pixel at the image
 
         Args:
@@ -111,9 +124,9 @@ class Graphics:
         and writes the colors at the specified pixel based on the image
         line length
         """
-        endian: int = self.maze_buffer[3]
-        pixel: int = (pixel_y * self.maze_buffer[2]) + (pixel_x * 4)
-        buffer_pixels = self.maze_buffer[0]
+        endian: int = buffer[3]
+        pixel: int = (pixel_y * buffer[2]) + (pixel_x * 4)
+        buffer_pixels = buffer[0]
         if endian == 1:
             buffer_pixels[pixel] = (color >> 24)
             buffer_pixels[pixel + 1] = (color >> 16) & 0xFF
@@ -127,21 +140,23 @@ class Graphics:
 
     def draw_box(
             self, pixel_x: int, pixel_y: int, color: int, multiplier_x: int,
-            multiplier_y) -> None:
+            multiplier_y, buffer: tuple[memoryview, int, int, int]) -> None:
         """A function for drawing a box"""
         for i in range(multiplier_y):
             for j in range(multiplier_x):
-                self.put_pixels_at_img(pixel_x + j, pixel_y + i, color)
+                self.put_pixels_at_img(pixel_x + j, pixel_y + i, color, buffer)
 
     def draw_pixel_multiplied(
-            self, pixel_x: int, pixel_y: int, color: int) -> None:
+            self, pixel_x: int, pixel_y: int, color: int,
+            buffer: tuple[memoryview, int, int, int]) -> None:
         """A function for drawing thicker wall"""
         for i in range(self.wall_multiplier):
             for j in range(self.wall_multiplier):
-                self.put_pixels_at_img(pixel_x + j, pixel_y + i, color)
+                self.put_pixels_at_img(pixel_x + j, pixel_y + i, color, buffer)
 
     def draw_line(
             self, x1: int, y1: int, x2: int, y2: int,
+            buffer: tuple[memoryview, int, int, int],
             color: int = 0xFFFFFFFF) -> None:
         """Main function for drawing lines
 
@@ -166,13 +181,14 @@ class Graphics:
         delta_pixels = round(delta_pixels)
 
         while (delta_pixels):
-            self.draw_pixel_multiplied(pixel_x, pixel_y, color)
+            self.draw_pixel_multiplied(pixel_x, pixel_y, color, buffer)
             pixel_x += delta_x
             pixel_y += delta_y
             delta_pixels -= 1
 
     def create_cell(
-            self, x1: int, y1: int, x2: int, y2: int, walls: int) -> None:
+            self, x1: int, y1: int, x2: int, y2: int, walls: int,
+            buffer: tuple[memoryview, int, int, int]) -> None:
         """This function is gonna create a cell with the specified walls
 
         Args:
@@ -188,15 +204,19 @@ class Graphics:
         """
         if (walls >= 8):
             walls -= 8
-            self.draw_line(x1, y1, x1, y2, color=self.colors[0]["walls"])
+            self.draw_line(x1, y1, x1, y2, buffer,
+                           color=self.colors[0]["walls"])
         if (walls >= 4):
             walls -= 4
-            self.draw_line(x1, y2, x2, y2, color=self.colors[0]["walls"])
+            self.draw_line(x1, y2, x2, y2, buffer,
+                           color=self.colors[0]["walls"])
         if (walls >= 2):
             walls -= 2
-            self.draw_line(x2, y1, x2, y2, color=self.colors[0]["walls"])
+            self.draw_line(x2, y1, x2, y2, buffer,
+                           color=self.colors[0]["walls"])
         if (walls == 1):
-            self.draw_line(x1, y1, x2, y1, color=self.colors[0]["walls"])
+            self.draw_line(x1, y1, x2, y1, buffer,
+                           color=self.colors[0]["walls"])
 
     def display_menu(self, maze: Maze, algorithms: Algorithms) -> None:
         """Function for displaying the menu
@@ -234,7 +254,10 @@ class Graphics:
             algorithms.create_map(maze)
             solve_maze(maze)
             self.generate_black_window()
+            self.generate_invisible_window()
             self.display_maze(maze)
+            self.display_route(maze)
+            self.route_visible = False
             self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
             self.m.mlx_put_image_to_window(
                 self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
@@ -242,7 +265,16 @@ class Graphics:
             self.loop()
             self.display_menu(maze, algorithms)
         elif choice == 2:
-            print("Functionality under construction")
+            if self.route_visible:
+                self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
+                self.m.mlx_put_image_to_window(
+                    self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+                self.route_visible = False
+            else:
+                self.m.mlx_put_image_to_window(
+                    self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
+                self.route_visible = True
+            self.loop()
             self.display_menu(maze, algorithms)
         elif choice == 3:
             self.rotate_colors()
@@ -277,17 +309,49 @@ class Graphics:
             for j in range(maze.width):
                 if maze.entry == (j, i):
                     self.draw_box(actual_x, actual_y, self.colors[0]["entry"],
-                                  increment_x, increment_y)
+                                  increment_x, increment_y, self.maze_buffer)
                 elif maze.exit == (j, i):
                     self.draw_box(actual_x, actual_y, self.colors[0]["exit"],
-                                  increment_x, increment_y)
+                                  increment_x, increment_y, self.maze_buffer)
                 cell: Cell = maze.maze_map[i][j]
                 if cell.block_42:
                     self.draw_box(
                         actual_x, actual_y, self.colors[0]["42"],
-                        increment_x, increment_y)
+                        increment_x, increment_y, self.maze_buffer)
                 self.create_cell(
                     actual_x, actual_y, actual_x + increment_x, actual_y +
-                    increment_y, cell.calculate_walls())
+                    increment_y, cell.calculate_walls(), self.maze_buffer)
                 actual_x += increment_x
             actual_y += increment_y
+
+    def display_route(self, maze: Maze):
+        increment_x: int = int(
+            ((self.win_width - self.wall_multiplier) / maze.width))
+        increment_y: int = int(
+            (self.win_height - self.wall_multiplier) / maze.height)
+        actual_x: int = int(maze.entry[0] * increment_x + increment_x / 2)
+        actual_y: int = int(maze.entry[1] * increment_y + increment_y / 2)
+        print(f"initial_x: {actual_x}, initial_y: {actual_y}")
+        print(maze.route)
+        for i in range(len(maze.route)):
+            direction = maze.route[i]
+            if direction == "N":
+                self.draw_line(actual_x, actual_y, actual_x,
+                               actual_y - increment_y, self.route_buffer,
+                               self.colors[0]["route"])
+                actual_y -= increment_y
+            elif direction == "S":
+                self.draw_line(actual_x, actual_y, actual_x,
+                               actual_y + increment_y, self.route_buffer,
+                               self.colors[0]["route"])
+                actual_y += increment_y
+            elif direction == "W":
+                self.draw_line(actual_x, actual_y, actual_x - increment_x,
+                               actual_y, self.route_buffer,
+                               self.colors[0]["route"])
+                actual_x -= increment_x
+            elif direction == "E":
+                self.draw_line(actual_x, actual_y, actual_x + increment_x,
+                               actual_y, self.route_buffer,
+                               self.colors[0]["route"])
+                actual_x += increment_x
