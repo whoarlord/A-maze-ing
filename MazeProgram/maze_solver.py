@@ -20,6 +20,8 @@ def solve_maze(maze: Maze) -> None:
                       maze.algorithm, maze.seed)
     apply_floodfill(maze.exit, flood_maze)
     all_not_visited(flood_maze)
+    x, y = flood_maze.entry
+    flood_maze.get_cell(x, y).routed = True
 
     player = Player(maze.entry)
 

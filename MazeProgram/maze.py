@@ -54,19 +54,35 @@ class Player:
         match direction:
             case "E":
                 self.x += 1
-                self.movements.append("E")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "W"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("E")
 
             case "W":
                 self.x -= 1
-                self.movements.append("W")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "E"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("W")
 
             case "N":
                 self.y -= 1
-                self.movements.append("N")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "S"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("N")
 
             case "S":
                 self.y += 1
-                self.movements.append("S")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "N"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("S")
 
     def get_last_movement(self) -> str:
 
@@ -74,6 +90,18 @@ class Player:
             return self.movements[len(self.movements) - 1]
         else:
             return "No movements yet"
+
+    def last_coordenate(self) -> tuple[int, int]:
+
+        match self.get_last_movement():
+            case "N":
+                return self.x, (self.y + 1)
+            case "S":
+                return self.x, (self.y - 1)
+            case "E":
+                return (self.x - 1), self.y
+            case "W":
+                return (self.x + 1), self.y
 
     def print_path(self) -> None:
 
@@ -88,11 +116,35 @@ class Player:
 
         return string
 
+    def backtracking(self, maze: "Maze", posible_moves: list
+                     [tuple[int, int]]) -> None:
+
+        while not ((self.x, self.y) in posible_moves):
+            direction = self.movements.pop()
+            match direction:
+                case "N":
+                    if not ((self.x, self.y+1) in posible_moves):
+                        maze.get_cell(self.x, self.y).routed = False
+                    self.y += 1
+                case "S":
+                    if not ((self.x, self.y-1) in posible_moves):
+                        maze.get_cell(self.x, self.y).routed = False
+                    self.y -= 1
+                case "E":
+                    if not ((self.x-1, self.y) in posible_moves):
+                        maze.get_cell(self.x, self.y).routed = False
+                    self.x -= 1
+                case "W":
+                    if not ((self.x-1, self.y) in posible_moves):
+                        maze.get_cell(self.x, self.y).routed = False
+                    self.x += 1
+
 
 class Cell:
     def __init__(self):
         self.visited: bool = False
         self.block_42: bool = False
+        self.routed: bool = False
         self.weight = 0
         self.N = 0
         self.S = 0
@@ -347,46 +399,31 @@ class Maze:
             key: value for key, value in posible_moves.items()
             if value <= min_weight}
 
-        """ if len(posible_moves) > 1:
-            player_move = player.get_last_movement()
-            match player_move:
-                case "N":
-                    for move in posible_moves:
-                        m_x, m_y = move
-                        if not (m_x == player.x and m_y == player.y - 1):
-                            posible_moves.remove(move)
+        return_x: int
+        return_y: int
 
-                case "S":
-                    for move in posible_moves:
-                        m_x, m_y = move
-                        if not (m_x == player.x and m_y == player.y + 1):
-                            posible_moves.remove(move)
+        all_routed: bool = True
+        for coords in result.keys():
+            return_x, return_y = coords
+            if not self.get_cell(return_x, return_y).routed:
+                all_routed = False
+                break
 
-                case "E":
-                    for move in posible_moves:
-                        m_x, m_y = move
-                        if not (m_x == player.x + 1 and m_y == player.y):
-                            posible_moves.remove(move)
-
-                case "W":
-                    for move in posible_moves:
-                        m_x, m_y = move
-                        if not (m_x == player.x - 1 and m_y == player.y):
-                            posible_moves.remove(move) """
-
-        return_x, return_y = result.popitem()[0]
+        if all_routed:
+            last_movement = player.last_coordenate()
+            print(f"{result}")
+            if last_movement in result and len(result) > 1:
+                result.pop(last_movement)
+            player.backtracking(self, list(result.keys()))
+        """ if self.get_cell(return_x, return_y).routed:
+            print(f"Cell to backtrack to: {return_x}, {return_y}")
+            player.backtracking(
+                (return_x, return_y),
+                self, list(result.keys()))
+            return self.find_lowest_neighbour((player.x, player.y), player)
+        else: """
+        self.get_cell(return_x, return_y).routed = True
         return return_x, return_y
-
-    def print_wight_map(self):
-
-        # Metodo de testeo, luego borrar
-
-        print("Weight Map:")
-        for i in range(self.height):
-            for j in range(self.width):
-                print(self.maze_map[i][j].weight, " ", end="")
-            print("")
-        print()
 
     def result_to_output(self, solution: str):
         self.route = solution
