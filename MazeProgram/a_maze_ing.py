@@ -36,8 +36,8 @@ def main():
     maze = Maze(**dictionary)
     algorithms = Algorithms()
     algorithms.create_map(maze)
-    graphics = Graphics(maze)
     maze_solver.solve_maze(maze)
+    graphics = Graphics(maze)
     graphics.display_menu(maze, algorithms)
 
 
