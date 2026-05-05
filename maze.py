@@ -1,4 +1,3 @@
-from functools import lru_cache
 from functools import reduce
 
 
@@ -156,7 +155,8 @@ class Maze:
     def __init__(
             self, width: int, height: int, entry: tuple[int, int],
             exit: tuple[int, int],
-            output_file: str, perfect: bool, animation: bool, algorithm: str):
+            output_file: str, perfect: bool, animation: bool,
+            algorithm: str, seed: int):
         self.width = width
         self.height = height
         self.entry = entry
@@ -165,6 +165,7 @@ class Maze:
         self.perfect = perfect
         self.animation = animation
         self.algorithm = algorithm
+        self.seed = seed
         self.maze_map: list[list[Cell]] = self.create_map()
         if (self.create_42()):
             self.maze_map = self.create_map()
@@ -180,6 +181,12 @@ class Maze:
 
     def get_cell(self, x: int, y: int) -> Cell:
         return self.maze_map[y][x]
+
+    def re_generate(self):
+        self.seed = 0
+        self.maze_map = self.create_map()
+        if (self.create_42()):
+            self.maze_map = self.create_map()
 
     def not_visited_neighbours(self, x: int, y: int) -> list[int]:
         """
@@ -299,13 +306,14 @@ class Maze:
                 break
         return distance
 
-    def print_map(self):
-        print("Map:")
+    def map_to_str(self) -> str:
+        result: str = ""
         for i in range(self.height):
             for j in range(self.width):
-                print(self.maze_map[i][j], end="")
-            print("")
-        print()
+                result += self.maze_map[i][j].__str__()
+            result += "\n"
+        result += "\n"
+        return result
 
     def is_exit(self, cell: tuple[int, int]) -> bool:
         return self.exit == cell
@@ -378,3 +386,11 @@ class Maze:
                 print(self.maze_map[i][j].weight, " ", end="")
             print("")
         print()
+
+    def result_to_output(self, solution: str):
+        with open(self.output_file, "w") as f:
+            f.write(self.map_to_str())
+            f.write(f"{self.entry[0]},{self.entry[1]}\n")
+            f.write(f"{self.exit[0]},{self.exit[1]}\n")
+            f.write(f"{solution}\n\n")
+        print(f"Seed:{self.seed}\n")

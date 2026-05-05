@@ -1,15 +1,51 @@
 from maze import Maze, Cell
-from random import randint, shuffle
+from random import randint, shuffle, seed
 
 
 class Algorithms:
-    def create_map(self, maze: Maze):
+    def create_map(self, maze: Maze) -> None:
+        """This function creates the maze based on the config file
+
+        This function creates a seed or uses the seed from the maze if it is
+        greater than 0, and then create a maze based on that seed and the
+        algorithm specified at the maze.algorithm
+
+        Args:
+        - maze (Maze): the object with the specified configuration of the maze
+
+        """
+        if maze.seed <= 0:
+            self.create_seed(maze)
+        else:
+            seed(maze.seed)
         if maze.algorithm == "kruskal":
             self.create_map_kruskal(maze)
         elif maze.algorithm == "prim":
             self.create_map_prim(maze)
 
+    def create_seed(self, maze: Maze) -> None:
+        """Function for creating a random seed for the maze"""
+        number: int = 0
+        for i in range(maze.height):
+            for j in range(maze.width):
+                number = (number + randint(0, 15)) * 16
+        maze.seed = number
+        seed(number)
+
     def create_map_kruskal(self, maze: Maze) -> None:
+        """Function for creating a map using the kruskal algorithm
+
+        This function put up all the walls of the maze and then it gives to
+        each of them a group, the objective is to change the group of all the
+        cells by destroying walls.
+
+        It selects a random direction from one cell to an adyacent cell which
+        is not at the same group and destroys the wall between them changing
+        all the cells group to the same group
+
+        Args:
+        - maze (Maze): the class where the maze is gonna be placed
+        """
         print("Executing kruskal algorithm\n")
         cell_list: list[tuple[int, int]] = []
         cell_group: list[int] = []
@@ -45,6 +81,7 @@ class Algorithms:
 
     def update_group(self, x: int, y: int, cell_group: list[int],
                      cell_list: list[tuple[int, int]], new_group: int) -> None:
+        """Function for updating the group of a cell"""
         group_id_to_update: int = self.get_group_from_cell(
             x, y, cell_group, cell_list)
         for i in range(len(cell_group)):
@@ -53,6 +90,7 @@ class Algorithms:
 
     @staticmethod
     def check_group(cell_group: list[int]) -> bool:
+        """Function if all cells corresponds to the same group"""
         group_id: int = cell_group[0]
         for group in cell_group:
             if group != group_id:
@@ -62,7 +100,8 @@ class Algorithms:
     @staticmethod
     def get_group_from_cell(
             x: int, y: int, cell_group: list[int],
-            cell_list: list[tuple[int, int]]):
+            cell_list: list[tuple[int, int]]) -> int:
+        """Function for getting the group of a cell"""
         for i in range(len(cell_list)):
             if cell_list[i] == (x, y):
                 return cell_group[i]
@@ -71,6 +110,19 @@ class Algorithms:
     def not_same_group_cells(
             self, maze: Maze, x: int, y: int, i: int, cell_list: list[int],
             cell_group: list[int]) -> list[int]:
+        """Function for checking adyacents cells group
+
+        This function checks if adyacents cells are from a diferent group
+        and if they are it adds that direction to the list so the main
+        kruskal function can choose one direction randomly
+
+        Args:
+        - maze (Maze): the object representing the maze is gonna be created
+        - x (int): the x coordinate of the actual cell in the maze
+        - y (int): the y coordinate of the actual cell in the maze
+        - i (int): the index of the actual cell group at the cell_group
+        - cell_list (list[int]): the list
+        """
         directions: list[int] = []
         if (y - 1 >= 0
                 and self.get_group_from_cell(x, y - 1, cell_group, cell_list)
@@ -91,6 +143,22 @@ class Algorithms:
         return directions
 
     def create_map_prim(self, maze: Maze) -> None:
+        """Function for creating a maze based on prim algorithm
+
+        This function receives creates a maze based on the prim algorithm
+        for that it start from the entry covering it by walls and select
+        a random direction which it has not being visited,
+        then it destroy the wall for that direction and creates new walls
+        around the new cell.
+
+        It continue iterating until it have visited all the cells
+        In the case that we are looking for a non perfect maze we call a
+        function for destroying walls
+
+        Args:
+        - maze (Maze): the object representing the parameters for the maze
+        we are gonna create
+        """
         print("Executing prim algorithm\n")
         stack: list[tuple[int, int]] = [maze.entry]
         x, y = stack[-1]
@@ -113,6 +181,13 @@ class Algorithms:
 
     def check_neighbours_for_routes(
             self, maze: Maze, threshold: int, x: int, y: int):
+        """Checks the distance between a cell and their adyacent
+
+        This function receive a position of a cell a maze where the cell is
+        and a threshold and checks if a specific cell is further from an
+        adyacent cell than the threshold and destroys the wall between them
+        to make an non perfect maze
+        """
         if (y - 1 >= 0 and not maze.get_cell(x, y - 1).block_42
                 and maze.distance_between_cells(x, y, x, y - 1)
                 > threshold):
@@ -131,6 +206,7 @@ class Algorithms:
             maze.get_cell(x, y).uncover_dir_flex(maze.get_cell(x - 1, y), 1)
 
     def create_multiple_routes(self, maze: Maze, threshold: int = 10) -> None:
+        """This function destroys walls between cells based on the threshold"""
         for y in range(maze.height):
             for x in range(maze.width):
                 self.check_neighbours_for_routes(maze, threshold, x, y)

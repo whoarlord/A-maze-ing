@@ -3,7 +3,9 @@ from math import sqrt
 from maze import Maze, Cell
 from screeninfo import get_monitors, Monitor
 from collections import deque
-from time import sleep
+from Algorithms import Algorithms
+from maze_solver import solve_maze
+from typing import Any
 
 
 class Graphics:
@@ -57,19 +59,30 @@ class Graphics:
             self.mlx_ptr, self.win_width, self.win_height)
         self.maze_buffer = self.m.mlx_get_data_addr(self.maze_img_ptr)
         self.wall_multiplier: int = 5
+        self.generate_black_window()
         self.display_maze(maze)
-        sleep(0.1)
         self.win_ptr = self.m.mlx_new_window(
             self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
-        sleep(0.1)
         self.m.mlx_put_image_to_window(
             self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
         self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
+        self.m.mlx_hook(self.win_ptr, 2, 1, self.key_hook, self)
         self.m.mlx_hook(self.win_ptr, 33, 0, self.close_hook, self)
+        self.loop()
 
-    @staticmethod
-    def close_hook(self: "Graphics") -> int:
+    def generate_black_window(self) -> None:
+        """This function generate a completely black window"""
+        for i in range(self.win_height):
+            for j in range(self.win_width):
+                self.put_pixels_at_img(j, i, 0x00000000)
+
+    def close_hook(self, param: Any) -> int:
         """Hook for exiting the loop"""
+        self.m.mlx_loop_exit(self.mlx_ptr)
+        return (1)
+
+    def key_hook(self, keycode: int, param: Any) -> int:
+        """Hook for continuing the program"""
         self.m.mlx_loop_exit(self.mlx_ptr)
         return (1)
 
@@ -82,7 +95,7 @@ class Graphics:
         self.colors.rotate()
 
     def put_pixels_at_img(
-            self, pixel_x: int, pixel_y: int, color: int):
+            self, pixel_x: int, pixel_y: int, color: int) -> None:
         """Function for putting specific pixel at the image
 
         Args:
@@ -110,21 +123,21 @@ class Graphics:
 
     def draw_box(
             self, pixel_x: int, pixel_y: int, color: int, multiplier_x: int,
-            multiplier_y):
+            multiplier_y) -> None:
         """A function for drawing a box"""
         for i in range(multiplier_y):
             for j in range(multiplier_x):
                 self.put_pixels_at_img(pixel_x + j, pixel_y + i, color)
 
     def draw_pixel_multiplied(
-            self, pixel_x: int, pixel_y: int, color: int):
+            self, pixel_x: int, pixel_y: int, color: int) -> None:
         """A function for drawing thicker wall"""
         for i in range(self.wall_multiplier):
             for j in range(self.wall_multiplier):
                 self.put_pixels_at_img(pixel_x + j, pixel_y + i, color)
 
     def draw_line(
-            self, x1: int, y1: int, x2: int, y2: int, color: int = 0xFFFFFFFF):
+            self, x1: int, y1: int, x2: int, y2: int, color: int = 0xFFFFFFFF) -> None:
         """Main function for drawing lines
 
         Args:
@@ -154,7 +167,7 @@ class Graphics:
             delta_pixels -= 1
 
     def create_cell(
-            self, x1: int, y1: int, x2: int, y2: int, walls: int):
+            self, x1: int, y1: int, x2: int, y2: int, walls: int) -> None:
         """This function is gonna create a cell with the specified walls
 
         Args:
@@ -179,13 +192,14 @@ class Graphics:
             self.draw_line(x2, y1, x2, y2, color=self.colors[0]["walls"])
         if (walls == 1):
             self.draw_line(x1, y1, x2, y1, color=self.colors[0]["walls"])
-        pass
 
-    def display_menu(self, maze: Maze):
+    def display_menu(self, maze: Maze, algorithms: Algorithms) -> None:
         """Function for displaying the menu
 
         Args:
         - maze (Maze): the maze to be displayed or changed
+        - algorithms (Algorithms): the object for executing the algorithms
+        to create the maze
 
         This functiions displays a menu for the user, so he can
         make 4 different choices, based on the input number between
@@ -211,18 +225,27 @@ class Graphics:
                 print("The input should be a number")
                 choice = 0
         if choice == 1:
-            print("Functionality under construction")
-            self.display_menu(maze)
+            maze.re_generate()
+            algorithms.create_map(maze)
+            solve_maze(maze)
+            self.generate_black_window()
+            self.display_maze(maze)
+            self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+            self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
+            self.loop()
+            self.display_menu(maze, algorithms)
         elif choice == 2:
             print("Functionality under construction")
-            self.display_menu(maze)
+            self.display_menu(maze, algorithms)
         elif choice == 3:
             self.rotate_colors()
             self.display_maze(maze)
             self.m.mlx_put_image_to_window(
                 self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
             self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
-            self.display_menu(maze)
+            self.display_menu(maze, algorithms)
 
     def display_maze(self, maze: Maze):
         """This is the main function for displaying the maze

@@ -225,7 +225,7 @@ def floodfill_map(maze: Maze) -> None:
 
     flood_maze = Maze(maze.width, maze.height, maze.entry, maze.exit,
                       maze.output_file, maze.perfect, maze.animation,
-                      maze.algorithm)
+                      maze.algorithm, maze.seed)
     apply_floodfill_start(maze.exit, flood_maze)
     all_not_visited(flood_maze)
 
@@ -248,3 +248,4 @@ def floodfill_map(maze: Maze) -> None:
             player.print_path()
             print("\n")
             break
+    maze.result_to_output(player.path_tostring())
