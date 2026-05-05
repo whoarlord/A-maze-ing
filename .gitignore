@@ -1,3 +1,5 @@
 **/__pycache__
 .vscode
 MazeEnv
+maze.txt
+MazeProgram/config.txt
