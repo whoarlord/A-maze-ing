@@ -69,13 +69,19 @@ class Graphics:
         self.route_buffer = self.m.mlx_get_data_addr(self.route_img_ptr)
         self.route_visible: bool = False
         self.wall_multiplier: int = 5
-        self.generate_black_window()
-        self.display_maze(maze)
-        self.display_route(maze)
-        self.win_ptr = self.m.mlx_new_window(
-            self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
-        self.m.mlx_put_image_to_window(
-            self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+        self.animation = maze.animation
+        if self.animation:
+            self.win_ptr = self.m.mlx_new_window(
+                self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
+            self.display_maze(maze)
+            self.display_route(maze)
+        else:
+            self.display_maze(maze)
+            self.display_route(maze)
+            self.win_ptr = self.m.mlx_new_window(
+                self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
         self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
         self.m.mlx_hook(self.win_ptr, 2, 1, self.key_hook, self)
         self.m.mlx_hook(self.win_ptr, 33, 0, self.close_hook, self)
@@ -85,13 +91,15 @@ class Graphics:
         """This function generate a completely black window"""
         for i in range(self.win_height):
             for j in range(self.win_width):
-                self.put_pixels_at_img(j, i, 0x00000000, self.maze_buffer)
+                self.put_pixels_at_img(
+                    j, i, 0xFF000000, self.maze_buffer)
 
     def generate_invisible_window(self) -> None:
         """This function generate a completely invisible window"""
         for i in range(self.win_height):
             for j in range(self.win_width):
-                self.put_pixels_at_img(j, i, 0x00000000, self.route_buffer)
+                self.put_pixels_at_img(
+                    j, i, 0x00000000, self.route_buffer)
 
     def close_hook(self, param: Any) -> int:
         """Hook for exiting the loop"""
@@ -113,8 +121,7 @@ class Graphics:
 
     def put_pixels_at_img(
             self, pixel_x: int, pixel_y: int, color: int,
-            buffer: tuple[memoryview,
-                          int, int, int]) -> None:
+            buffer: tuple[memoryview, int, int, int]) -> None:
         """Function for putting specific pixel at the image
 
         Args:
@@ -146,7 +153,8 @@ class Graphics:
         """A function for drawing a box"""
         for i in range(multiplier_y):
             for j in range(multiplier_x):
-                self.put_pixels_at_img(pixel_x + j, pixel_y + i, color, buffer)
+                self.put_pixels_at_img(
+                    pixel_x + j, pixel_y + i, color, buffer)
 
     def draw_pixel_multiplied(
             self, pixel_x: int, pixel_y: int, color: int,
@@ -154,7 +162,8 @@ class Graphics:
         """A function for drawing thicker wall"""
         for i in range(self.wall_multiplier):
             for j in range(self.wall_multiplier):
-                self.put_pixels_at_img(pixel_x + j, pixel_y + i, color, buffer)
+                self.put_pixels_at_img(
+                    pixel_x + j, pixel_y + i, color, buffer)
 
     def draw_line(
             self, x1: int, y1: int, x2: int, y2: int,
@@ -223,11 +232,6 @@ class Graphics:
     def display_menu(self, maze: Maze, algorithms: Algorithms) -> None:
         """Function for displaying the menu
 
-        Args:
-        - maze (Maze): the maze to be displayed or changed
-        - algorithms (Algorithms): the object for executing the algorithms
-        to create the maze
-
         This functiions displays a menu for the user, so he can
         make 4 different choices, based on the input number between
         1 and 4:
@@ -235,12 +239,18 @@ class Graphics:
         - 2. Show/Hide path from entry to exit
         - 3. Rotate maze colors
         - 4. Quit
+
+        Args:
+        - maze (Maze): the maze to be displayed or changed
+        - algorithms (Algorithms): the object for executing the algorithms
+        to create the maze
         """
         print("=== A-Maze-ing ===")
         print("1. Re-generate a new maze")
         print("2. Show/Hide path from entry to exit")
         print("3. Rotate maze colors")
         print("4. Quit")
+        print(self.animation)
 
         choice: int = 0
         while (choice < 1 or choice > 4):
@@ -256,6 +266,10 @@ class Graphics:
             algorithms.create_map(maze)
             solve_maze(maze)
             self.generate_black_window()
+            if self.animation:
+                self.m.mlx_put_image_to_window(
+                    self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+                self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
             self.generate_invisible_window()
             self.display_maze(maze)
             self.display_route(maze)
@@ -286,11 +300,8 @@ class Graphics:
             self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
             self.display_menu(maze, algorithms)
 
-    def display_maze(self, maze: Maze):
+    def display_maze(self, maze: Maze) -> None:
         """This is the main function for displaying the maze
-
-        Args:
-        - maze (Maze): the maze to be displayed
 
         This function calculates the increment of x and y, so it covers
         all the window. Then it draws the 4 different elements that we have:
@@ -298,6 +309,9 @@ class Graphics:
         - exit box: for displaying where the maze ends
         - block_42 boxes: for displaying the unique 42 cells
         - cell boxes: for displaying the walls of each cell
+
+        Args:
+        - maze (Maze): the maze to be displayed
         """
         initial_x: int = 0
         actual_y: int = 0
@@ -324,9 +338,22 @@ class Graphics:
                     actual_x, actual_y, actual_x + increment_x, actual_y +
                     increment_y, cell.calculate_walls(), self.maze_buffer)
                 actual_x += increment_x
+                if self.animation:
+                    self.m.mlx_put_image_to_window(
+                        self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+                    self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
             actual_y += increment_y
 
-    def display_route(self, maze: Maze):
+    def display_route(self, maze: Maze) -> None:
+        """This is the main function for displaying the route
+
+        This function calculates the increment of x and y, so it covers
+        all the window. Then it draws a line between the actual position
+        and the new direction specified by the maze.route
+
+        Args:
+        - maze (Maze): the maze to be displayed
+        """
         increment_x: int = int(
             ((self.win_width - self.wall_multiplier) / maze.width))
         increment_y: int = int(

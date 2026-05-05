@@ -106,9 +106,9 @@ class Parser:
 
                 case "DISPLAY_MODE":
                     if value == "Normal":
-                        dictionary.update({"Animation": False})
+                        dictionary.update({"ANIMATION": False})
                     elif value == "Animated":
-                        dictionary.update({"Animation": True})
+                        dictionary.update({"ANIMATION": True})
                     else:
                         raise DisplayModeError(line)
                 case "ALGORITHM":
@@ -130,7 +130,7 @@ class Parser:
             "EXIT": dictionary.get("EXIT"),
             "OUTPUT_FILE": dictionary.get("OUTPUT_FILE"),
             "PERFECT": dictionary.get("PERFECT"),
-            "ANIMATION": dictionary.get("ANIMATION", "Normal"),
+            "ANIMATION": dictionary.get("ANIMATION", False),
             "ALGORITHM": dictionary.get("ALGORITHM", "prim"),
             "SEED": dictionary.get("SEED", 0)
         }
