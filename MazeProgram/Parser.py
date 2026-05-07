@@ -13,6 +13,9 @@ class Config(TypedDict):
     EXIT: tuple[int, int]
     OUTPUT_FILE: str
     PERFECT: bool
+    ANIMATION: bool
+    ALGORITHM: str
+    SEED: int
 
 
 class Parser:
@@ -105,15 +108,15 @@ class Parser:
                         raise PerfectError(line)
 
                 case "DISPLAY_MODE":
-                    if value == "Normal":
+                    if value.capitalize() == "Normal":
                         dictionary.update({"Animation": False})
                     elif value == "Animated":
-                        dictionary.update({"Animation": True})
+                        dictionary.update({"ANIMATION": True})
                     else:
                         raise DisplayModeError(line)
                 case "ALGORITHM":
-                    if value == "kruskal" or value == "prim":
-                        dictionary.update({parameter: value})
+                    if value.lower() == "kruskal" or value.lower() == "prim":
+                        dictionary.update({parameter: value.lower()})
                     else:
                         raise AlgorithmError(line)
                 case _:
@@ -130,7 +133,7 @@ class Parser:
             "EXIT": dictionary.get("EXIT"),
             "OUTPUT_FILE": dictionary.get("OUTPUT_FILE"),
             "PERFECT": dictionary.get("PERFECT"),
-            "ANIMATION": dictionary.get("ANIMATION", "Normal"),
+            "ANIMATION": dictionary.get("ANIMATION", False),
             "ALGORITHM": dictionary.get("ALGORITHM", "prim"),
             "SEED": dictionary.get("SEED", 0)
         }
