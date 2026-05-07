@@ -38,7 +38,6 @@ def main():
     algorithms.create_map(maze)
     maze_solver.solve_maze(maze)
     graphics = Graphics(maze)
-    graphics.display_menu(maze, algorithms)
 
 
 if __name__ == "__main__":
