@@ -8,6 +8,7 @@ class Player:
         self.x = x
         self.y = y
         self.movements: list[str] = []
+        self.contador = 0
 
     def can_move_to(self, direction: str, maze: "Maze") -> bool:
 
@@ -116,11 +117,23 @@ class Player:
 
         return string
 
-    def backtracking(self, maze: "Maze", posible_moves: list
+    """ def backtracking(self, maze: "Maze", posible_moves: list
                      [tuple[int, int]]) -> None:
 
+        testeo: list[str] = self.movements
         while not ((self.x, self.y) in posible_moves):
-            direction = self.movements.pop()
+
+            try:
+                direction = self.movements.pop()
+            except Exception:
+                from Graphics import Graphics
+                from Algorithms import Algorithms
+                self.movements = testeo
+                print(testeo)
+                graphics = Graphics(maze)
+                algorithms = Algorithms()
+                graphics.display_menu(maze, algorithms)
+
             match direction:
                 case "N":
                     if not ((self.x, self.y+1) in posible_moves):
@@ -137,7 +150,20 @@ class Player:
                 case "W":
                     if not ((self.x-1, self.y) in posible_moves):
                         maze.get_cell(self.x, self.y).routed = False
-                    self.x += 1
+                    self.x += 1 """
+
+    def backtracking(self) -> None:
+
+        direction = self.movements.pop()
+        match direction:
+            case "N":
+                self.y += 1
+            case "S":
+                self.y -= 1
+            case "E":
+                self.x -= 1
+            case "W":
+                self.x += 1
 
 
 class Cell:
@@ -158,9 +184,13 @@ class Cell:
         self.E = 1
         self.W = 1
 
-    def cell_42(self):
+    def cell_42(self, x: int, y: int, maze: "Maze") -> None:
         self.block_42 = True
         self.cover_all()
+        maze.get_cell(x+1, y).W = 1
+        maze.get_cell(x-1, y).E = 1
+        maze.get_cell(x, y+1).N = 1
+        maze.get_cell(x, y-1).S = 1
 
     def uncover_dir_flex(self, visiting_cell: "Cell", dir: int) -> None:
         if dir == 0:
@@ -307,19 +337,22 @@ class Maze:
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42()
+                    self.get_cell(moving_x, moving_y).cell_42(
+                        moving_x, moving_y, self)
                 elif (moving_x == x1 + 1 and moving_y - y1 == 2):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42()
+                    self.get_cell(moving_x, moving_y).cell_42(
+                        moving_x, moving_y, self)
                 elif (moving_x == x1 + 2 and moving_y - y1 >= 2):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42()
+                    self.get_cell(moving_x, moving_y).cell_42(
+                        moving_x, moving_y, self)
                 elif ((moving_y == y1 or moving_y == y1 + 2
                        or moving_y == y1 + 4)
                       and moving_x - x1 > 3):
@@ -327,19 +360,23 @@ class Maze:
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42()
+                    self.get_cell(moving_x, moving_y).cell_42(
+                        moving_x, moving_y, self)
                 elif (moving_y == y1 + 1 and moving_x - x1 == 6):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42()
+                    self.get_cell(moving_x, moving_y).cell_42(
+                        moving_x, moving_y, self)
                 elif (moving_y == y1 + 3 and moving_x - x1 == 4):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42()
+                    self.get_cell(
+                        moving_x, moving_y).cell_42(
+                        moving_x, moving_y, self)
                 moving_x += 1
             moving_y += 1
         return (0)
@@ -411,17 +448,33 @@ class Maze:
 
         if all_routed:
             last_movement = player.last_coordenate()
-            print(f"{result}")
-            if last_movement in result and len(result) > 1:
-                result.pop(last_movement)
-            player.backtracking(self, list(result.keys()))
-        """ if self.get_cell(return_x, return_y).routed:
-            print(f"Cell to backtrack to: {return_x}, {return_y}")
-            player.backtracking(
-                (return_x, return_y),
-                self, list(result.keys()))
-            return self.find_lowest_neighbour((player.x, player.y), player)
-        else: """
+            print(f"Last movement: {last_movement}")
+            test_x, test_y = list(result.keys())[0]
+            print(f"{result}, {self.get_cell(test_x, test_y).routed}")
+            if len(player.movements) == 0:
+                self.print_wight_map()
+                from Graphics import Graphics
+                from Algorithms import Algorithms
+                self.route = player.path_tostring()
+                print(f"Player position: {self.get_cell(3, 18).routed}")
+                graphics = Graphics(self)
+                algorithms = Algorithms()
+                graphics.display_menu(self, algorithms)
+                exit(1)
+                return self.exit
+            player.backtracking()
+            if player.contador == 5:
+                from Graphics import Graphics
+                from Algorithms import Algorithms
+                self.route = player.path_tostring()
+                print(f"Player position: {self.get_cell(3, 18).routed}")
+                graphics = Graphics(self)
+                algorithms = Algorithms()
+                graphics.display_menu(self, algorithms)
+            if test_x == 4 and test_y == 18:
+                player.contador += 1
+            return player.x, player.y
+
         self.get_cell(return_x, return_y).routed = True
         return return_x, return_y
 
@@ -434,3 +487,14 @@ class Maze:
             f.write(f"{self.exit[0]},{self.exit[1]}\n")
             f.write(f"{solution}\n\n")
         print(f"Seed:{self.seed}\n")
+
+    def print_wight_map(self):
+
+        # Metodo de testeo, luego borrar
+
+        print("Weight Map:")
+        for i in range(self.height):
+            for j in range(self.width):
+                print(self.maze_map[i][j].weight, " ", end="")
+            print("")
+        print()

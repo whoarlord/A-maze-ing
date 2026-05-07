@@ -15,13 +15,16 @@ def solve_maze(maze: Maze) -> None:
     Args:
     - maze (Maze): the object with the representation of the maze we created.
     """
-    flood_maze = Maze(maze.width, maze.height, maze.entry, maze.exit,
-                      maze.output_file, maze.perfect, maze.animation,
-                      maze.algorithm, maze.seed)
-    apply_floodfill(maze.exit, flood_maze)
-    all_not_visited(flood_maze)
-    x, y = flood_maze.entry
-    flood_maze.get_cell(x, y).routed = True
+    all_not_visited(maze)
+    apply_floodfill(maze.exit, maze)
+    maze.print_wight_map()
+    """ from Graphics import Graphics
+    from Algorithms import Algorithms
+    graphics = Graphics(flood_maze)
+    algorithms = Algorithms()
+    graphics.display_menu(flood_maze, algorithms)
+    exit(1)
+    return """
 
     player = Player(maze.entry)
 
@@ -30,7 +33,7 @@ def solve_maze(maze: Maze) -> None:
 
     while True:
 
-        x, y = move_player(flood_maze, maze, player)
+        x, y = move_player(maze, player)
 
         paso += 1
 
@@ -43,26 +46,26 @@ def solve_maze(maze: Maze) -> None:
     maze.result_to_output(player.path_tostring())
 
 
-""" def apply_floodfill_neighbours_start(
+def apply_floodfill_neighbours_start(
         cell: tuple[int, int],
         maze: Maze) -> None:
 
     x, y = cell
 
     if ((x+1) < maze.width and not maze.get_cell(x+1, y).visited and
-        maze.get_cell(x, y).E == 0):
+            maze.get_cell(x, y).E == 0):
         apply_floodfill_start((x+1, y), maze)
 
     if ((x-1) >= 0 and not maze.get_cell(x-1, y).visited and
-        maze.get_cell(x, y).W == 0):
+            maze.get_cell(x, y).W == 0):
         apply_floodfill_start((x-1, y), maze)
 
     if ((y+1) < maze.height and not maze.get_cell(x, y+1).visited and
-        maze.get_cell(x, y).S == 0):
+            maze.get_cell(x, y).S == 0):
         apply_floodfill_start((x, y+1), maze)
 
     if ((y-1) >= 0 and not maze.get_cell(x, y-1).visited and
-        maze.get_cell(x, y).N == 0):
+            maze.get_cell(x, y).N == 0):
         apply_floodfill_start((x, y-1), maze)
 
 
@@ -112,7 +115,7 @@ def apply_floodfill_start(cell: tuple[int, int], maze: Maze) -> None:
         elif cel.weight > maze.get_cell(x, y).weight + 1:
             cel.weight = maze.get_cell(x, y).weight + 1
 
-    apply_floodfill_neighbours_start(cell, maze) """
+    apply_floodfill_neighbours_start(cell, maze)
 
 
 def apply_floodfill_neighbours(cell: tuple[int, int], maze: Maze) -> None:
@@ -134,21 +137,37 @@ def apply_floodfill_neighbours(cell: tuple[int, int], maze: Maze) -> None:
 
     x, y = cell
 
-    if ((x+1) < maze.width and not maze.get_cell(x+1, y).visited and
-            maze.get_cell(x, y).E == 0):
-        apply_floodfill((x+1, y), maze)
+    if ((x+1) < maze.width and maze.get_cell(x, y).E == 0):
+        if (maze.get_cell(
+                x + 1, y).visited and maze.get_cell(
+                x, y).weight < maze.get_cell(
+                x + 1, y).weight) or (not maze.get_cell(
+                x + 1, y).visited):
+            apply_floodfill((x+1, y), maze)
 
-    if ((x-1) >= 0 and not maze.get_cell(x-1, y).visited and
-            maze.get_cell(x, y).W == 0):
-        apply_floodfill((x-1, y), maze)
+    if ((x-1) >= 0 and maze.get_cell(x, y).W == 0):
+        if (maze.get_cell(
+                x - 1, y).visited and maze.get_cell(
+                x, y).weight < maze.get_cell(
+                x - 1, y).weight) or (not maze.get_cell(
+                x - 1, y).visited):
+            apply_floodfill((x-1, y), maze)
 
-    if ((y+1) < maze.height and not maze.get_cell(x, y+1).visited and
-            maze.get_cell(x, y).S == 0):
-        apply_floodfill((x, y+1), maze)
+    if ((y+1) < maze.height and maze.get_cell(x, y).S == 0):
+        if (maze.get_cell(
+                x, y+1).visited and maze.get_cell(
+                x, y).weight < maze.get_cell(
+                x, y+1).weight) or (not maze.get_cell(
+                x, y+1).visited):
+            apply_floodfill((x, y+1), maze)
 
-    if ((y-1) >= 0 and not maze.get_cell(x, y-1).visited and
-            maze.get_cell(x, y).N == 0):
-        apply_floodfill((x, y-1), maze)
+    if ((y-1) >= 0 and maze.get_cell(x, y).N == 0):
+        if (maze.get_cell(
+                x, y-1).visited and maze.get_cell(
+                x, y).weight < maze.get_cell(
+                x, y-1).weight) or (not maze.get_cell(
+                x, y-1).visited):
+            apply_floodfill((x, y-1), maze)
 
 
 def apply_floodfill(cell: tuple[int, int], maze: Maze) -> None:
@@ -289,7 +308,7 @@ def move_to_lowest(player: Player, flood_maze: Maze) -> None:
     player.move_to(player.get_direction((x, y)))
 
 
-def move_player(flood_maze: Maze, original_maze: Maze, player: Player
+def move_player(maze: Maze, player: Player
                 ) -> tuple[int, int]:
     """This function will move the player to the next most optimal position.
 
@@ -312,13 +331,7 @@ def move_player(flood_maze: Maze, original_maze: Maze, player: Player
         such as his actual position in the maze.
     """
 
-    update_walls(player, original_maze, flood_maze)
-
-    all_weights_zero(flood_maze)
-    all_not_visited(flood_maze)
-
-    apply_floodfill(original_maze.exit, flood_maze)
-    move_to_lowest(player, flood_maze)
+    move_to_lowest(player, maze)
 
     return (player.x, player.y)
 
