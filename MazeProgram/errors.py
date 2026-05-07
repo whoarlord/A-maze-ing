@@ -60,7 +60,7 @@ class InvalidValueError(Exception):
     """
 
     def __init__(
-            self, line: str, value: int, limit, limit_name: str) -> None:
+            self, line: str, value: int, limit: int, limit_name: str) -> None:
 
         if value >= limit:
             message = f" The value: {value} can't be bigger or equal than the {

@@ -26,12 +26,11 @@ $(MLX): install
 run: $(VIRTUALENV)
 	$(PYTHON) $(MAIN) $(MAP)
 
-debug:
-	$(PYTHON) $(DEBUGGER) $(MAIN)
+debug: $(VIRTUALENV)
+	$(PYTHON) $(DEBUGGER) $(MAIN) $(MAP) </dev/tty
 
 $(VIRTUALENV):
 	python3 -m venv $(VIRTUALENV)
-
 
 clean:
 	py3clean .

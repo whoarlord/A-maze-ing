@@ -13,6 +13,9 @@ class Config(TypedDict):
     EXIT: tuple[int, int]
     OUTPUT_FILE: str
     PERFECT: bool
+    ANIMATION: bool
+    ALGORITHM: str
+    SEED: int
 
 
 class Parser:
