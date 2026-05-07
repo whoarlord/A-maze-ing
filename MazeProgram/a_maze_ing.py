@@ -4,10 +4,10 @@ from Parser import Parser
 from errors import ParseError, PerfectError, InvalidValueError
 from typing import Any
 from maze import Maze
-from Algorithms import Algorithms
 from Graphics import Graphics
 import maze_solver as maze_solver
 import sys
+from Maze_Generator import MazeGenerator
 
 
 def main():
@@ -33,12 +33,16 @@ def main():
     dictionary = dict(
         map(lambda item: (item[0].lower(), item[1]),
             dictionary.items()))
-    maze = Maze(**dictionary)
+    """ maze = Maze(**dictionary)
     algorithms = Algorithms()
     algorithms.create_map(maze)
     maze_solver.solve_maze(maze)
     graphics = Graphics(maze)
-    graphics.display_menu(maze, algorithms)
+    graphics.display_menu(maze, algorithms) """
+    generator = MazeGenerator(dictionary)
+    maze_solver.solve_maze(generator.maze)
+    graphics = Graphics(generator.maze)
+    graphics.display_menu(generator)
 
 
 if __name__ == "__main__":

@@ -454,7 +454,7 @@ class Maze:
             if len(player.movements) == 0:
                 self.print_wight_map()
                 from Graphics import Graphics
-                from Algorithms import Algorithms
+                from MazeProgram.Maze_Generator import Algorithms
                 self.route = player.path_tostring()
                 print(f"Player position: {self.get_cell(3, 18).routed}")
                 graphics = Graphics(self)
@@ -465,7 +465,7 @@ class Maze:
             player.backtracking()
             if player.contador == 5:
                 from Graphics import Graphics
-                from Algorithms import Algorithms
+                from MazeProgram.Maze_Generator import Algorithms
                 self.route = player.path_tostring()
                 print(f"Player position: {self.get_cell(3, 18).routed}")
                 graphics = Graphics(self)

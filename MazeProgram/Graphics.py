@@ -3,9 +3,9 @@ from math import sqrt
 from maze import Maze, Cell
 from screeninfo import get_monitors, Monitor
 from collections import deque
-from Algorithms import Algorithms
 from maze_solver import solve_maze
 from typing import Any
+from Maze_Generator import MazeGenerator
 
 
 class Graphics:
@@ -220,7 +220,7 @@ class Graphics:
             self.draw_line(x1, y1, x2, y1, buffer,
                            color=self.colors[0]["walls"])
 
-    def display_menu(self, maze: Maze, algorithms: Algorithms) -> None:
+    def display_menu(self, algorithms: MazeGenerator) -> None:
         """Function for displaying the menu
 
         Args:
@@ -252,20 +252,20 @@ class Graphics:
                 print("The input should be a number")
                 choice = 0
         if choice == 1:
-            maze.re_generate()
-            algorithms.create_map(maze)
-            solve_maze(maze)
+            algorithms.maze.re_generate()
+            algorithms.create_map()
+            solve_maze(algorithms.maze)
             self.generate_black_window()
             self.generate_invisible_window()
-            self.display_maze(maze)
-            self.display_route(maze)
+            self.display_maze(algorithms.maze)
+            self.display_route(algorithms.maze)
             self.route_visible = False
             self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
             self.m.mlx_put_image_to_window(
                 self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
             self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
             self.loop()
-            self.display_menu(maze, algorithms)
+            self.display_menu(algorithms)
         elif choice == 2:
             if self.route_visible:
                 self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
@@ -277,14 +277,14 @@ class Graphics:
                     self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
                 self.route_visible = True
             self.loop()
-            self.display_menu(maze, algorithms)
+            self.display_menu(algorithms)
         elif choice == 3:
             self.rotate_colors()
-            self.display_maze(maze)
+            self.display_maze(algorithms.maze)
             self.m.mlx_put_image_to_window(
                 self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
             self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
-            self.display_menu(maze, algorithms)
+            self.display_menu(algorithms)
 
     def display_maze(self, maze: Maze):
         """This is the main function for displaying the maze
