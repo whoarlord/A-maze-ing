@@ -1,4 +1,4 @@
-MAP=MazeProgram/config.txt
+MAP=config.txt
 DEBUGGER= -m pdb
 
 VIRTUALENV= MazeEnv
@@ -6,9 +6,9 @@ PYTHON=$(VIRTUALENV)/bin/python3
 PIP=$(VIRTUALENV)/bin/pip
 
 MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
-DEPENDENCIES=MazeProgram/requirements.txt
+DEPENDENCIES=requirements.txt
 
-MAIN=MazeProgram/a_maze_ing.py
+MAIN=a_maze_ing.py
 
 TOCLEAN=.mypy_cache
 
@@ -27,6 +27,9 @@ debug: $(VIRTUALENV)
 
 $(VIRTUALENV):
 	python3 -m venv $(VIRTUALENV)
+
+build:
+	$(PYTHON) -m build
 
 clean:
 	py3clean .

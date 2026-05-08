@@ -1,4 +1,4 @@
-from maze import Maze, Cell
+from .maze import Maze, Cell
 from random import randint, shuffle, seed
 
 

@@ -3,3 +3,5 @@
 MazeEnv
 maze.txt
 MazeProgram/config.txt
+.dist
+a_maze_ing.egg-info

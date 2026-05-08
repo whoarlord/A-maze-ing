@@ -1,4 +1,4 @@
-from maze import Maze, Player
+from .maze import Maze, Player
 
 
 def solve_maze(maze: Maze) -> None:

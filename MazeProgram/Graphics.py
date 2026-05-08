@@ -1,10 +1,10 @@
+from .maze import Maze, Cell
+from .Algorithms import Algorithms
+from .maze_solver import solve_maze
 from mlx import Mlx
 from math import sqrt
-from maze import Maze, Cell
 from screeninfo import get_monitors, Monitor
 from collections import deque
-from Algorithms import Algorithms
-from maze_solver import solve_maze
 from typing import Any, TypedDict
 
 
