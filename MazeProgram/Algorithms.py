@@ -17,6 +17,7 @@ class Algorithms:
             self.create_seed(maze)
         else:
             seed(maze.seed)
+        print(f"Map seed: {maze.seed}")
         if maze.algorithm == "kruskal":
             self.create_map_kruskal(maze)
         elif maze.algorithm == "prim":
