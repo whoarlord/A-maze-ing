@@ -3,7 +3,7 @@ from .Player import Player
 
 
 class Cell:
-    def __init__(self):
+    def __init__(self) -> None:
         self.visited: bool = False
         self.block_42: bool = False
         self.routed: bool = False
@@ -13,7 +13,7 @@ class Cell:
         self.E = 0
         self.W = 0
 
-    def cover_all(self):
+    def cover_all(self) -> None:
         self.visited = True
         self.N = 1
         self.S = 1
@@ -62,8 +62,9 @@ class Cell:
                 return self.S == 1
             case "W":
                 return self.W == 1
+        return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         hexadeimal: str = "0123456789ABCDEF"
         return f"{hexadeimal[self.calculate_walls()]}"
 
@@ -101,7 +102,7 @@ class Maze:
     def get_cell(self, x: int, y: int) -> Cell:
         return self.maze_map[y][x]
 
-    def re_generate(self):
+    def re_generate(self) -> None:
         self.seed = 0
         self.maze_map = self.create_map()
         if (self.create_42()):
@@ -151,7 +152,7 @@ class Maze:
         else:
             raise ValueError("Unknow direction")
 
-    def check_42_collisiones(self, x: int, y: int):
+    def check_42_collisiones(self, x: int, y: int) -> bool:
         return ((self.entry[0] == x and self.entry[1] == y)
                 or (self.exit[0] == x and self.exit[1] == y))
 
@@ -283,38 +284,13 @@ class Maze:
                 break
 
         if all_routed:
-            last_movement = player.last_coordenate()
-            print(f"Last movement: {last_movement}")
-            test_x, test_y = list(result.keys())[0]
-            print(f"{result}, {self.get_cell(test_x, test_y).routed}")
-            if len(player.movements) == 0:
-                self.print_wight_map()
-                from Graphics import Graphics
-                from Algorithms import Algorithms
-                self.route = player.path_tostring()
-                print(f"Player position: {self.get_cell(3, 18).routed}")
-                graphics = Graphics(self)
-                algorithms = Algorithms()
-                graphics.display_menu(self, algorithms)
-                exit(1)
-                return self.exit
             player.backtracking()
-            if player.contador == 5:
-                from Graphics import Graphics
-                from Algorithms import Algorithms
-                self.route = player.path_tostring()
-                print(f"Player position: {self.get_cell(3, 18).routed}")
-                graphics = Graphics(self)
-                algorithms = Algorithms()
-                graphics.display_menu(self, algorithms)
-            if test_x == 4 and test_y == 18:
-                player.contador += 1
             return player.x, player.y
 
         self.get_cell(return_x, return_y).routed = True
         return return_x, return_y
 
-    def result_to_output(self, solution: str):
+    def result_to_output(self, solution: str) -> None:
         self.route = solution
         with open(self.output_file, "w") as f:
             f.write(self.map_to_str())
@@ -322,14 +298,3 @@ class Maze:
             f.write(f"{self.exit[0]},{self.exit[1]}\n")
             f.write(f"{solution}\n\n")
         print(f"Seed:{self.seed}\n")
-
-    def print_wight_map(self):
-
-        # Metodo de testeo, luego borrar
-
-        print("Weight Map:")
-        for i in range(self.height):
-            for j in range(self.width):
-                print(self.maze_map[i][j].weight, " ", end="")
-            print("")
-        print()

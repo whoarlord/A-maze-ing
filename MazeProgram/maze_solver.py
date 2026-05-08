@@ -1,4 +1,5 @@
-from .maze import Maze, Player
+from .maze import Maze
+from .Player import Player
 
 
 def solve_maze(maze: Maze) -> None:
@@ -30,8 +31,6 @@ def solve_maze(maze: Maze) -> None:
         paso += 1
 
         if x == exit_x and y == exit_y:
-            """ print(f"A path has been found from {maze.entry} to {maze.exit}")
-            print("The path is the folowing: ", end="") """
             break
     maze.result_to_output(player.path_tostring())
 
