@@ -6,7 +6,7 @@ from typing import TypedDict
 import sys
 
 
-class Config(TypedDict):
+class RawConfig(TypedDict, total=False):
 
     WIDTH: int
     HEIGHT: int
@@ -19,14 +19,27 @@ class Config(TypedDict):
     SEED: int
 
 
+class Config(TypedDict):
+
+    width: int
+    height: int
+    entry: tuple[int, int]
+    exit: tuple[int, int]
+    output_file: str
+    perfect: bool
+    animation: bool
+    algorithm: str
+    seed: int
+
+
 class Parser:
 
-    def parse_line(self, line: str, dictionary: Config) -> None:
+    def parse_line(self, line: str, dictionary: RawConfig) -> None:
         """Function for parsing the entry
 
         Args:
         - line (str): the line which is being readed from the config file
-        - dictionary (Config): the dictionary representing the parameters of
+        - dictionary (RawConfig): the dictionary representing the parameters of
         the maze
 
         This function receive a line and checks if the format and values of
@@ -49,7 +62,7 @@ class Parser:
                         number = int(value)
                         if number <= 0:
                             raise InvalidValueError(
-                                line, number, None, parameter)
+                                line, number, 0, parameter)
 
                         if parameter == "WIDTH":
                             dictionary.update({parameter: number})
@@ -69,10 +82,11 @@ class Parser:
 
                         if x_int < 0 or x_int >= dictionary.get("WIDTH", 0):
                             raise InvalidValueError(
-                                line, x_int, dictionary.get("WIDTH"), "WIDTH")
+                                line, x_int, dictionary.get("WIDTH", 0),
+                                "WIDTH")
                         elif y_int < 0 or y_int >= dictionary.get("HEIGHT", 0):
                             raise InvalidValueError(
-                                line, y_int, dictionary.get("HEIGHT"),
+                                line, y_int, dictionary.get("HEIGHT", 0),
                                 "HEIGHT")
 
                         if parameter == "ENTRY":
@@ -102,7 +116,7 @@ class Parser:
                                 or dictionary.get("WIDTH") is None):
                             raise OrderError(line)
                         limits: int = dictionary.get(
-                            "WIDTH") * dictionary.get("WIDTH") * 10
+                            "WIDTH", 0) * dictionary.get("WIDTH", 0) * 10
                         if limits > 640:
                             sys.set_int_max_str_digits(limits)
                         seed = int(value)
@@ -125,7 +139,7 @@ class Parser:
 
                 case "DISPLAY_MODE":
                     if value.capitalize() == "Normal":
-                        dictionary.update({"Animation": False})
+                        dictionary.update({"ANIMATION": False})
                     elif value == "Animated":
                         dictionary.update({"ANIMATION": True})
                     else:
@@ -140,16 +154,16 @@ class Parser:
         else:
             raise ParseError(line)
 
-    def complete_dictionary(self, dictionary: dict):
+    def complete_dictionary(self, dictionary: RawConfig) -> Config:
         """This function completes the dictionary with the 3 optional values"""
         return {
-            "WIDTH": dictionary.get("WIDTH"),
-            "HEIGHT": dictionary.get("HEIGHT"),
-            "ENTRY": dictionary.get("ENTRY"),
-            "EXIT": dictionary.get("EXIT"),
-            "OUTPUT_FILE": dictionary.get("OUTPUT_FILE"),
-            "PERFECT": dictionary.get("PERFECT"),
-            "ANIMATION": dictionary.get("ANIMATION", False),
-            "ALGORITHM": dictionary.get("ALGORITHM", "prim"),
-            "SEED": dictionary.get("SEED", 0)
+            "width": dictionary.get("WIDTH", 0),
+            "height": dictionary.get("HEIGHT", 0),
+            "entry": dictionary.get("ENTRY", (0, 0)),
+            "exit": dictionary.get("EXIT", (0, 0)),
+            "output_file": dictionary.get("OUTPUT_FILE", ""),
+            "perfect": dictionary.get("PERFECT", True),
+            "animation": dictionary.get("ANIMATION", False),
+            "algorithm": dictionary.get("ALGORITHM", "prim"),
+            "seed": dictionary.get("SEED", 0)
         }

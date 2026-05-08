@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 
-from MazeProgram import Parser
+from MazeProgram import Parser, Config, RawConfig
 from MazeProgram import ParseError, PerfectError, InvalidValueError
 from MazeProgram import Maze
 from MazeProgram import Algorithms
 from MazeProgram.Graphics import Graphics
 from MazeProgram import solve_maze
-from typing import Any
 import sys
 
 
-def main():
+def main() -> None:
 
     parser = Parser()
-    dictionary: dict[str: Any] = {}
+    dictionary: RawConfig = {}
     argc: int = len(sys.argv)
 
     try:
@@ -29,11 +28,8 @@ def main():
         print("An error has been found on the configuration file, "
               "the program will now close.")
         exit(1)
-    dictionary = parser.complete_dictionary(dictionary)
-    dictionary = dict(
-        map(lambda item: (item[0].lower(), item[1]),
-            dictionary.items()))
-    maze = Maze(**dictionary)
+    dictionary_output: Config = parser.complete_dictionary(dictionary)
+    maze = Maze(**dictionary_output)
     limits: int = maze.width * maze.height * 10
     sys.setrecursionlimit(limits)
     if (limits > 640):

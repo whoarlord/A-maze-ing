@@ -2,8 +2,8 @@ from .maze import Maze, Cell
 from .Algorithms import Algorithms
 from .maze_solver import solve_maze
 from mlx import Mlx
-from math import sqrt
 from screeninfo import get_monitors, Monitor
+from math import sqrt
 from collections import deque
 from typing import Any, TypedDict
 
@@ -30,7 +30,7 @@ class Graphics:
     - colors (deque[dict[int]]): the set of colors for the maze
     """
 
-    colors: deque[dict[int]] = deque([
+    colors: deque[dict[str, int]] = deque([
         {
             "entry": 0xFFFF6B6B,
             "exit": 0xFF4ECDC4,
@@ -202,7 +202,8 @@ class Graphics:
 
     def draw_box(
             self, pixel_x: int, pixel_y: int, color: int, multiplier_x: int,
-            multiplier_y, buffer: tuple[memoryview, int, int, int]) -> None:
+            multiplier_y: int,
+            buffer: tuple[memoryview, int, int, int]) -> None:
         """A function for drawing a box"""
         for i in range(multiplier_y):
             for j in range(multiplier_x):
@@ -236,19 +237,19 @@ class Graphics:
         """
         delta_x: int = x2 - x1
         delta_y: int = y2 - y1
-        delta_pixels: int = sqrt((delta_x * delta_x) + (delta_y * delta_y))
+        delta_pixels: float = sqrt((delta_x * delta_x) + (delta_y * delta_y))
 
         delta_x = int(delta_x / delta_pixels)
         delta_y = int(delta_y / delta_pixels)
         pixel_x = x1
         pixel_y = y1
-        delta_pixels = round(delta_pixels)
+        delta_pixels_loop: int = round(delta_pixels)
 
-        while (delta_pixels):
+        while (delta_pixels_loop):
             self.draw_pixel_multiplied(pixel_x, pixel_y, color, buffer)
             pixel_x += delta_x
             pixel_y += delta_y
-            delta_pixels -= 1
+            delta_pixels_loop -= 1
 
     def create_cell(
             self, x1: int, y1: int, x2: int, y2: int, walls: int,

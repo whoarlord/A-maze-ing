@@ -59,9 +59,8 @@ class InvalidValueError(Exception):
     - line (str): the specific line were the error is
     """
 
-    def __init__(
-            self, line: str, value: int, limit: int, limit_name: str) -> None:
-
+    def __init__(self, line: str, value: int, limit: int,
+                 limit_name: str) -> None:
         if value >= limit:
             message = f" The value: {value} can't be bigger or equal than the {
                 limit_name}."

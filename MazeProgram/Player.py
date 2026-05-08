@@ -5,7 +5,6 @@ class Player:
         self.x = x
         self.y = y
         self.movements: list[str] = []
-        self.contador = 0
 
     def get_direction(self, coords: tuple[int, int]) -> str:
 
@@ -18,6 +17,7 @@ class Player:
             return "S"
         elif self.y > y:
             return "N"
+        return "N"
 
     def move_to(self, direction: str) -> None:
 
@@ -58,8 +58,7 @@ class Player:
 
         if len(self.movements) > 0:
             return self.movements[len(self.movements) - 1]
-        else:
-            return "No movements yet"
+        return "No movements yet"
 
     def last_coordenate(self) -> tuple[int, int]:
 
@@ -72,6 +71,7 @@ class Player:
                 return (self.x - 1), self.y
             case "W":
                 return (self.x + 1), self.y
+        return (self.x + 1), self.y
 
     def print_path(self) -> None:
 
