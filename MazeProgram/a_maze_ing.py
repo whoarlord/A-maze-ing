@@ -34,11 +34,14 @@ def main():
         map(lambda item: (item[0].lower(), item[1]),
             dictionary.items()))
     maze = Maze(**dictionary)
+    limits: int = maze.width * maze.height * 10
+    sys.setrecursionlimit(limits)
+    if (limits > 640):
+        sys.set_int_max_str_digits(maze.width * maze.height * 10)
     algorithms = Algorithms()
     algorithms.create_map(maze)
     maze_solver.solve_maze(maze)
-    graphics = Graphics(maze)
-    graphics.display_menu(maze, algorithms)
+    Graphics(maze)
 
 
 if __name__ == "__main__":

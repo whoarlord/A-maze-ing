@@ -27,7 +27,7 @@ class Algorithms:
         number: int = 0
         for i in range(maze.height):
             for j in range(maze.width):
-                number = (number + randint(0, 15)) * 16
+                number = (number + randint(0, 15)) * 2
         maze.seed = number
         seed(number)
 

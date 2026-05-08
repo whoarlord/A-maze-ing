@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 from errors import (ParseError, PerfectError, InvalidValueError,
-                    DisplayModeError, AlgorithmError, SeedError)
+                    DisplayModeError, AlgorithmError, SeedError, OrderError)
 from typing import TypedDict
+import sys
 
 
 class Config(TypedDict):
@@ -76,8 +77,16 @@ class Parser:
 
                         if parameter == "ENTRY":
                             dictionary.update({parameter: (x_int, y_int)})
+                            if dictionary.get("EXIT") is not None:
+                                if dictionary.get("EXIT") == dictionary.get(
+                                        "ENTRY"):
+                                    raise Exception(f"error in line {line}")
                         else:
                             dictionary.update({parameter: (x_int, y_int)})
+                            if dictionary.get("ENTRY") is not None:
+                                if dictionary.get("ENTRY") == dictionary.get(
+                                        "EXIT"):
+                                    raise Exception(f"error in line {line}")
 
                     except ValueError as e:
                         raise Exception(
@@ -89,6 +98,13 @@ class Parser:
 
                 case "SEED":
                     try:
+                        if (dictionary.get("WIDTH") is None
+                                or dictionary.get("WIDTH") is None):
+                            raise OrderError(line)
+                        limits: int = dictionary.get(
+                            "WIDTH") * dictionary.get("WIDTH") * 10
+                        if limits > 640:
+                            sys.set_int_max_str_digits(limits)
                         seed = int(value)
                         if seed <= 0:
                             raise SeedError(line)
