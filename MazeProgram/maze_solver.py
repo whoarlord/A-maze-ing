@@ -32,8 +32,6 @@ def solve_maze(maze: Maze) -> None:
         if x == exit_x and y == exit_y:
             """ print(f"A path has been found from {maze.entry} to {maze.exit}")
             print("The path is the folowing: ", end="") """
-            player.print_path()
-            print("\n")
             break
     maze.result_to_output(player.path_tostring())
 

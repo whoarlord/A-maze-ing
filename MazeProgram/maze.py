@@ -480,7 +480,6 @@ class Maze:
 
     def result_to_output(self, solution: str):
         self.route = solution
-        print(self.route)
         with open(self.output_file, "w") as f:
             f.write(self.map_to_str())
             f.write(f"{self.entry[0]},{self.entry[1]}\n")
