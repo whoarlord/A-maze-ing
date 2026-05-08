@@ -3,6 +3,8 @@ from random import randint, shuffle, seed
 
 
 class Algorithms:
+    """Class representing the object for making cells"""
+
     def create_map(self, maze: Maze) -> None:
         """This function creates the maze based on the config file
 
@@ -11,7 +13,8 @@ class Algorithms:
         algorithm specified at the maze.algorithm
 
         Args:
-        - maze (Maze): the object with the specified configuration of the maze
+            maze (Maze): the object with the specified configuration of the
+                        maze
         """
         if maze.seed <= 0:
             self.create_seed(maze)
@@ -43,7 +46,7 @@ class Algorithms:
         all the cells group to the same group
 
         Args:
-        - maze (Maze): the class where the maze is gonna be placed
+            maze (Maze): the class where the maze is gonna be placed
         """
         print("Executing kruskal algorithm\n")
         cell_list: list[tuple[int, int]] = []
@@ -117,17 +120,17 @@ class Algorithms:
         kruskal function can choose one direction randomly
 
         Args:
-        - maze (Maze): the object representing the maze is gonna be created
-        - x (int): the x coordinate of the actual cell in the maze
-        - y (int): the y coordinate of the actual cell in the maze
-        - i (int): the index of the actual cell group at the cell_group
-        - cell_list (list[tuple[int, int]]): the list with the tuples
-        corresponding to the coordinates of each cell
-        - cell_group (list[int]): the list containing the group of each cell
+            maze (Maze): the object representing the maze is gonna be created
+            x (int): the x coordinate of the actual cell in the maze
+            y (int): the y coordinate of the actual cell in the maze
+            i (int): the index of the actual cell group at the cell_group
+            cell_list (list[tuple[int, int]]): the list with the tuples
+                    corresponding to the coordinates of each cell
+            cell_group (list[int]): the list containing the group of each cell
 
         Returns:
-        - directions (list[int]): the list with the posible directions to
-        destroy walls
+            directions (list[int]): the list with the posible directions to
+                            destroy walls
         """
         directions: list[int] = []
         if (y - 1 >= 0
@@ -162,8 +165,8 @@ class Algorithms:
         function for destroying walls
 
         Args:
-        - maze (Maze): the object representing the parameters for the maze
-        we are gonna create
+            maze (Maze): the object representing the parameters for the maze
+                    we are gonna create
         """
         print("Executing prim algorithm\n")
         stack: list[tuple[int, int]] = [maze.entry]
@@ -195,11 +198,11 @@ class Algorithms:
         to make an non perfect maze
 
         Args:
-        - maze (Maze): the object representing the maze is gonna be created
-        - threshold (int): the threshold to make decisions about destroying
-        the walls
-        - x (int): the x coordinate of the actual cell
-        - y (int): the y coordinate fo the actual cell
+            maze (Maze): the object representing the maze is gonna be created
+            threshold (int): the threshold to make decisions about destroying
+                        the walls
+            x (int): the x coordinate of the actual cell
+            y (int): the y coordinate fo the actual cell
         """
         if (y - 1 >= 0 and not maze.get_cell(x, y - 1).block_42
                 and maze.distance_between_cells(x, y, x, y - 1)
