@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="a-maze-ing",
-    version="0.1",
+    name="MazeProgram",
+    version="0.7",
     packages=find_packages(),
 )
