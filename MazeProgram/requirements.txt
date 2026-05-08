@@ -1,2 +1,2 @@
-mlx-2.2-py3-none-any.whl
+MazeProgram/mlx-2.2-py3-none-any.whl
 screeninfo
