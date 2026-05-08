@@ -3,8 +3,7 @@ from .Player import Player
 
 
 def solve_maze(maze: Maze) -> None:
-    """This function finds the shortest path from the entry to the exit of the
-      maze.
+    """This function finds the shortest path from the entry to the exit.
 
     This function finds the shortest path from the entry to the exit of the
     maze using the flood fill algorithm. It first creates a copy of the
@@ -14,7 +13,7 @@ def solve_maze(maze: Maze) -> None:
     again, taking inot acount the walls found untill that point.
 
     Args:
-    - maze (Maze): the object with the representation of the maze we created.
+        maze (Maze): the object with the representation of the maze we created.
     """
     all_not_visited(maze)
     apply_floodfill(maze.exit, maze)
@@ -46,10 +45,10 @@ def apply_floodfill_neighbours(cell: tuple[int, int], maze: Maze) -> None:
 
 
     Args:
-    - maze (Maze): the maze in witch we will apply the flood fill, which has
-        all the weighs and visited for each cell.
-    - cell (tuple[int, int]): the coordenates of the cell in the maze from
-        where we will search the adjacent cells.
+        maze (Maze): the maze in witch we will apply the flood fill, which has
+                all the weighs and visited for each cell.
+        cell (tuple[int, int]): the coordenates of the cell in the maze from
+                where we will search the adjacent cells.
     """
 
     x, y = cell
@@ -108,10 +107,10 @@ def apply_floodfill(cell: tuple[int, int], maze: Maze) -> None:
 
 
     Args:
-    - maze (Maze): the maze in witch we will apply the flood fill, which has
-        all the weighs and visited for each cell.
-    - cell (tuple[int, int]): the coordenates of the cell in the maze where we
-        will apply the flood fill from.
+        maze (Maze): the maze in witch we will apply the flood fill, which has
+                all the weighs and visited for each cell.
+        cell (tuple[int, int]): the coordenates of the cell in the maze where
+                we will apply the flood fill from.
     """
 
     x, y = cell
@@ -180,12 +179,12 @@ def move_player(maze: Maze, player: Player
     flood_maze.
 
     Args:
-    - flood_maze (Maze): the copy of our original maze, with the weights of
-        each cell.
-    - original_maze (Maze): the object with the representation of the original
-        maze we created.
-    - player (Player): the object that has all the information of the player,
-        such as his actual position in the maze.
+        flood_maze (Maze): the copy of our original maze, with the weights of
+                each cell.
+        original_maze (Maze): the object with the representation of the
+                original maze we created.
+        player (Player): the object that has all the information of the player,
+                such as his actual position in the maze.
     """
 
     x, y = maze.find_lowest_neighbour((player.x, player.y), player)
@@ -201,8 +200,8 @@ def all_not_visited(maze: Maze) -> None:
     atribute to False.
 
     Args:
-    - maze (Maze): the object with the representation of the maze we want to
-        reset.
+        maze (Maze): the object with the representation of the maze we want to
+                reset.
     """
 
     for i in range(maze.height):

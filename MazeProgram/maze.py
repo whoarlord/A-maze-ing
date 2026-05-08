@@ -3,6 +3,18 @@ from .Player import Player
 
 
 class Cell:
+    """A class representing a cell
+
+    Attributes:
+        visited (bool): boolean specifying if the cell was visited
+        block_42 (bool): boolean specfying if the cell is part of 42 block
+        routed (bool): boolean specfying if the route pass through that way
+        N (int): int representing the wall on the North
+        S (int): int representing the wall on the South
+        E (int): int representing the wall on the East
+        W (int): int representing the wall on the West
+    """
+
     def __init__(self) -> None:
         self.visited: bool = False
         self.block_42: bool = False
@@ -14,6 +26,7 @@ class Cell:
         self.W = 0
 
     def cover_all(self) -> None:
+        """This function raise all the walls of the cell"""
         self.visited = True
         self.N = 1
         self.S = 1
@@ -21,6 +34,7 @@ class Cell:
         self.W = 1
 
     def cell_42(self, x: int, y: int, maze: "Maze") -> None:
+        """This function raise the walls for the 42"""
         self.block_42 = True
         self.cover_all()
         maze.get_cell(x+1, y).W = 1
@@ -29,6 +43,7 @@ class Cell:
         maze.get_cell(x, y-1).S = 1
 
     def uncover_dir_flex(self, visiting_cell: "Cell", dir: int) -> None:
+        """This function destroys a wall from a cell based on direction"""
         if dir == 0:
             self.N = 0
             visiting_cell.S = 0
@@ -45,14 +60,16 @@ class Cell:
             raise ValueError("Unknow direction")
 
     def uncover_dir(self, visiting_cell: "Cell", dir: int) -> None:
+        """This function uncover"""
         visiting_cell.cover_all()
         self.uncover_dir_flex(visiting_cell, dir)
 
     def calculate_walls(self) -> int:
+        """calculates the number representing the walls of the cell"""
         return self.N * 1 + self.E * 2 + self.S * 4 + self.W * 8
 
     def has_wall(self, direction: str) -> bool:
-
+        """checks if a cell have a wall in a specific direction"""
         match direction:
             case "N":
                 return self.N == 1
@@ -70,6 +87,22 @@ class Cell:
 
 
 class Maze:
+    """Class representing the maze
+
+    Attributes:
+        width (int): the width of the maze
+        height (int): the height of the maze
+        entry (tuple[int, int]): the tuple representing the entry cell
+        exit (tuple[int, int]): the tuple representing the exit cell
+        output_file (str): the name of the file to write the output
+        perfect (bool): boolean specifying if is a perfect maze or not
+        animation (bool): boolean specifying if the display is gonna be
+                animated
+        algorithm (str): the specific algorithm is gonna be used to make the
+                maze
+        seed (int): the seed to make the maze
+        maze_map (list[list[Cell]]): the matrix representing the whole maze
+    """
 
     def __init__(
             self, width: int, height: int, entry: tuple[int, int],
@@ -91,6 +124,7 @@ class Maze:
         self.route: str = ""
 
     def create_map(self) -> list[list[Cell]]:
+        """Function for initializing the cells"""
         result: list[list[Cell]] = []
         for i in range(self.height):
             row: list[Cell] = []
@@ -100,20 +134,34 @@ class Maze:
         return result
 
     def get_cell(self, x: int, y: int) -> Cell:
+        """function for getting the cells with the x and y coordinates"""
         return self.maze_map[y][x]
 
     def re_generate(self) -> None:
+        """function for re-generating the whole maze"""
         self.seed = 0
         self.maze_map = self.create_map()
         if (self.create_42()):
             self.maze_map = self.create_map()
 
     def not_visited_neighbours(self, x: int, y: int) -> list[int]:
-        """
-        dir = 0: move N
-        dir = 1: move E
-        dir = 2: move S
-        dir = 3: move W
+        """Function for obteining the not visite cell neighbours
+
+        this function checks if the cells around the one gived have been
+        visited and adds them to the result list if they are not visited.
+
+        Directionss:
+        - dir = 0: move N
+        - dir = 1: move E
+        - dir = 2: move S
+        - dir = 3: move W
+
+        Args:
+            x (int): the x coordinate of the actual cell
+            y (int):_the y coordinate of the actual cell
+
+        Returns:
+            list[int]: list fo directions for not visited neighbours
         """
         result: list[int] = []
         if (y - 1 >= 0 and not self.get_cell(x, y - 1).visited):
@@ -128,6 +176,22 @@ class Maze:
 
     def get_adyacents(self, x: int, y: int, checked_cells:
                       list[tuple[int, int]]) -> list[tuple[int, int]]:
+        """returns a list of directions with the non-checked cells
+
+        This function takes the coordinates of the actual cell and the
+        list of the checked cells and then returns the adyacents cells
+        that are not at the checked cells
+
+        Args:
+            x (int): the x coordinate of the actual cell
+            y (int): the y coordinate of the actual cell
+            checked_cells (list[tuple[int, int]]): the list of the checked
+                    cells
+
+        Returns:
+            list[tuple[int, int]]: the list of the adyacent cells which are
+                    not in the checked_cells list
+        """
         result: list[tuple[int, int]] = []
         actual_cell: Cell = self.get_cell(x, y)
         if not actual_cell.N and not (x, y - 1) in checked_cells:
@@ -141,6 +205,7 @@ class Maze:
         return result
 
     def get_coord_by_dir(self, x: int, y: int, dir: int) -> tuple[int, int]:
+        """This function takes a direction and return the corresponding cell"""
         if dir == 0:
             return x, y - 1
         elif dir == 1:
@@ -153,11 +218,20 @@ class Maze:
             raise ValueError("Unknow direction")
 
     def check_42_collisiones(self, x: int, y: int) -> bool:
+        """This function checks if the entry or exit collide with the 42"""
         return ((self.entry[0] == x and self.entry[1] == y)
                 or (self.exit[0] == x and self.exit[1] == y))
 
     def create_42(self) -> int:
-        """The 42 must have a width of 7 and a height of 5"""
+        """This functions tries to create a 42 in the middle of the maze
+
+        The 42 must have a width greater or equal than 9 and
+        a height greater or equal than 7,
+        and must not collide with the entry or exit
+
+        Returns
+            int: 0 if the 42 can be created and 1 if not
+        """
         x1: int = int(self.width / 2 - 3)
         y1: int = int(self.height / 2 - 2)
         x2: int = x1 + 7
@@ -220,6 +294,21 @@ class Maze:
 
     def distance_between_cells(
             self, x1: int, y1: int, x2: int, y2: int) -> int:
+        """This function checks the distance between 2 cells
+
+        This functions makes aa BFS search for checking the distance between
+        2 cells, by expanding the initial cell until getting into end cell
+        and return the distance
+
+        Args:
+            x1 (int): the x coordinate of the initial cell
+            y1 (int): the y coordinate of the initial cell
+            x2 (int): the x coordinate of the end cell
+            y2 (int): the y coordiante of the end cell
+
+        Returns:
+            int: the distance between both cells
+        """
         cells_list: list[tuple[int, int]] = [(x1, y1)]
         checked_cells: list[tuple[int, int]] = []
         distance: int = 0
@@ -234,6 +323,7 @@ class Maze:
         return distance
 
     def map_to_str(self) -> str:
+        """Makes the string based on the map for the output file"""
         result: str = ""
         for i in range(self.height):
             for j in range(self.width):
@@ -242,15 +332,9 @@ class Maze:
         result += "\n"
         return result
 
-    def is_exit(self, cell: tuple[int, int]) -> bool:
-        return self.exit == cell
-
-    def is_entry(self, cell: tuple[int, int]) -> bool:
-        return self.entry == cell
-
     def find_lowest_neighbour(self, cell: tuple[int, int],
                               player: Player) -> tuple[int, int]:
-
+        """Calculates the lowest cost neighbour for the floodfill"""
         x, y = cell
         posible_moves: dict[tuple[int, int], int] = {}
         cel = self.get_cell(x, y)
@@ -291,6 +375,7 @@ class Maze:
         return return_x, return_y
 
     def result_to_output(self, solution: str) -> None:
+        """puts the corresponding information in the ourput file"""
         self.route = solution
         with open(self.output_file, "w") as f:
             f.write(self.map_to_str())

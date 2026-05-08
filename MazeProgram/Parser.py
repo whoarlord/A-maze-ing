@@ -33,17 +33,19 @@ class Config(TypedDict):
 
 
 class Parser:
+    """Class representing the object for making the parsing of the file"""
 
     def parse_line(self, line: str, dictionary: RawConfig) -> None:
         """Function for parsing the entry
 
-        Args:
-        - line (str): the line which is being readed from the config file
-        - dictionary (RawConfig): the dictionary representing the parameters of
-        the maze
-
         This function receive a line and checks if the format and values of
         the line are correct
+
+        Args:
+            line (str): the line which is being readed from the config file
+            dictionary (RawConfig): the dictionary representing the parameters of
+                the maze
+
         """
 
         if "=" in line:

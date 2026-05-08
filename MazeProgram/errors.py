@@ -3,8 +3,8 @@
 class ParseError(Exception):
     """Exception for parsing errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str) -> None:
@@ -16,8 +16,8 @@ class ParseError(Exception):
 class DisplayModeError(Exception):
     """Exception for Display mode parameter errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str) -> None:
@@ -29,8 +29,8 @@ class DisplayModeError(Exception):
 class PerfectError(Exception):
     """Exception for Perfect parameter errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str) -> None:
@@ -42,8 +42,8 @@ class PerfectError(Exception):
 class AlgorithmError(Exception):
     """Exception for Algorithm parameter errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str) -> None:
@@ -55,8 +55,8 @@ class AlgorithmError(Exception):
 class InvalidValueError(Exception):
     """Exception for Invalid Value errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str, value: int, limit: int,
@@ -74,8 +74,8 @@ class InvalidValueError(Exception):
 class SeedError(Exception):
     """Exception for Seed parameter errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str) -> None:
@@ -86,8 +86,8 @@ class SeedError(Exception):
 class OrderError(Exception):
     """Exception for order errors
 
-    Atributtes:
-    - line (str): the specific line were the error is
+    Attributes:
+        line (str): the specific line were the error is
     """
 
     def __init__(self, line: str) -> None:

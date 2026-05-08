@@ -16,18 +16,18 @@ class Params(TypedDict):
 class Graphics:
     """Class for making the graphic representation of the maze
 
-    Atributtes:
-    - m (Mlx): the main class of the minilibx
-    - mlx_ptr: the pointer to the mlx
-    - win_height (int): the height of the window base on the monitor
-    - win_width (int): the width of the window base on the monitor
-    - win_ptr: A pointer to the window we are gonna display
-    - maze_img_ptr: A pointer to the image containing the maze
-    - maze_buffer: The buffer of the maze image
-    - route_img_ptr: A pointer to the image containing the route
-    - route_buffer: The buffer of the route image
-    - wall_multiplier (int): the number for making the walls thicker
-    - colors (deque[dict[int]]): the set of colors for the maze
+    Attributes:
+        m (Mlx): the main class of the minilibx
+        mlx_ptr: the pointer to the mlx
+        win_height (int): the height of the window base on the monitor
+        win_width (int): the width of the window base on the monitor
+        win_ptr: A pointer to the window we are gonna display
+        maze_img_ptr: A pointer to the image containing the maze
+        maze_buffer: The buffer of the maze image
+        route_img_ptr: A pointer to the image containing the route
+        route_buffer: The buffer of the route image
+        wall_multiplier (int): the number for making the walls thicker
+        colors (deque[dict[int]]): the set of colors for the maze
     """
 
     colors: deque[dict[str, int]] = deque([
@@ -128,12 +128,12 @@ class Graphics:
         - 4. Quit
 
         Args:
-        - keycode (int): the code of the key is being pressed
-        - params (Params): argument containing the maze an the
-        algorithms to make the decisions
+            keycode (int): the code of the key is being pressed
+            params (Params): argument containing the maze an the
+                algorithms to make the decisions
 
-        Return:
-        - int: necessary for make it a hook for Mlx
+        Returns:
+            int: necessary for make it a hook for Mlx
         """
         maze: Maze = params.get("maze")
         algorithms: Algorithms = params.get("algorithms")
@@ -158,9 +158,9 @@ class Graphics:
         - Resets route visibility and redraws the UI menu
 
         Args:
-        - maze (Maze): The maze instance to regenerate.
-        - algorithms (Algorithms): The algorithm manager used to build the
-        maze.
+            maze (Maze): The maze instance to regenerate.
+            algorithms (Algorithms): The algorithm manager used to build the
+                maze.
         """
         maze.re_generate()
         algorithms.create_map(maze)
@@ -193,7 +193,7 @@ class Graphics:
         maze.
 
         Args:
-        - maze (Maze): The maze instance used to compute the route.
+            maze (Maze): The maze instance used to compute the route.
         """
         if self.route_visible:
             self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
@@ -215,7 +215,7 @@ class Graphics:
         with the rendering system.
 
         Args:
-        - maze (Maze): The maze instance used for rendering.
+            maze (Maze): The maze instance used for rendering.
         """
         self.colors.rotate()
         self.display_maze(maze)
@@ -242,10 +242,10 @@ class Graphics:
         line length
 
         Args:
-        - pixel_x (int): coordinates on x for the pixel
-        - pixel_y (int): coordinates on y for the pixel
-        - color (int): the color is gonna be used at the pixel
-        - buffer (tuple[memoryview, int, int, int]): the buffer to be filled
+            pixel_x (int): coordinates on x for the pixel
+            pixel_y (int): coordinates on y for the pixel
+            color (int): the color is gonna be used at the pixel
+            buffer (tuple[memoryview, int, int, int]): the buffer to be filled
         """
         endian: int = buffer[3]
         pixel: int = (pixel_y * buffer[2]) + (pixel_x * 4)
@@ -290,12 +290,12 @@ class Graphics:
         increment the pixel_x and the pixel_y to make it
 
         Args:
-        - x1 (int): the x coordinates where the line starts
-        - y1 (int): the y coordinates where the line starts
-        - x2 (int): the x coordinates where the line ends
-        - y2 (int): the y coordinates where the line ends
-        - buffer (tuple[memoryview, int, int, int]): the buffer to be filled
-        - color (int): the color of the line
+            x1 (int): the x coordinates where the line starts
+            y1 (int): the y coordinates where the line starts
+            x2 (int): the x coordinates where the line ends
+            y2 (int): the y coordinates where the line ends
+            buffer (tuple[memoryview, int, int, int]): the buffer to be filled
+            color (int): the color of the line
         """
         delta_x: int = x2 - x1
         delta_y: int = y2 - y1
@@ -323,12 +323,12 @@ class Graphics:
         north and east walls up
 
         Args:
-        - x1 (int): coordinate x for the top-left of the square
-        - y1 (int): coordinate y for the top-left of the square
-        - x2 (int): coordinate x for the bottom-right of the square
-        - y2 (int): coordinate y for the bottom-right of the square
-        - walls (int): an integer defining the walls at the cell
-        - buffer (tuple[memoryview, int, int, int]): the buffer to be filled
+            x1 (int): coordinate x for the top-left of the square
+            y1 (int): coordinate y for the top-left of the square
+            x2 (int): coordinate x for the bottom-right of the square
+            y2 (int): coordinate y for the bottom-right of the square
+            walls (int): an integer defining the walls at the cell
+            buffer (tuple[memoryview, int, int, int]): the buffer to be filled
         """
         if (walls >= 8):
             walls -= 8
@@ -365,7 +365,7 @@ class Graphics:
         - cell boxes: for displaying the walls of each cell
 
         Args:
-        - maze (Maze): the maze to be displayed
+            maze (Maze): the maze to be displayed
         """
         initial_x: int = 0
         actual_y: int = 0
@@ -408,7 +408,7 @@ class Graphics:
         and the new direction specified by the maze.route
 
         Args:
-        - maze (Maze): the maze to be displayed
+            maze (Maze): the maze to be displayed
         """
         increment_x: int = int(
             ((self.win_width - self.wall_multiplier) / maze.width))
