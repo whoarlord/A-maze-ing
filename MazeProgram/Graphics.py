@@ -75,6 +75,9 @@ class Graphics:
         self.route_visible: bool = False
         self.wall_multiplier: int = 5
         self.animation = maze.animation
+        self.initialize_animation(maze)
+
+    def initialize_animation(self, maze: Maze) -> None:
         if self.animation:
             self.win_ptr = self.m.mlx_new_window(
                 self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
@@ -112,79 +115,137 @@ class Graphics:
         self.m.mlx_loop_exit(self.mlx_ptr)
         return (1)
 
-    def key_hook(self, keycode: int, param: Params) -> int:
-        """Hook for continuing the program"""
-        maze: Maze = param.get("maze")
-        algorithms: Algorithms = param.get("algorithms")
+    def key_hook(self, keycode: int, params: Params) -> int:
+        """Hook making a decision about how to continue
+
+        with this function the user can make 4 different choices, based on the
+        input number between
+
+        1 and 4:
+        - 1. Re-generate a new maze
+        - 2. Show/Hide path from entry to exit
+        - 3. Rotate maze colors
+        - 4. Quit
+
+        Args:
+        - keycode (int): the code of the key is being pressed
+        - params (Params): argument containing the maze an the
+        algorithms to make the decisions
+
+        Return:
+        - int: necessary for make it a hook for Mlx
+        """
+        maze: Maze = params.get("maze")
+        algorithms: Algorithms = params.get("algorithms")
         if keycode == 49:
-            maze.re_generate()
-            algorithms.create_map(maze)
-            solve_maze(maze)
-            self.generate_black_window()
-            if self.animation:
-                self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
-                self.m.mlx_put_image_to_window(
-                    self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
-                self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
-            self.generate_invisible_window()
-            self.display_maze(maze)
-            if not self.animation:
-                self.display_route(maze)
-            self.route_visible = False
-            if not self.animation:
-                self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
-            self.m.mlx_put_image_to_window(
-                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
-            self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
-            self.display_menu()
+            self.re_generate_maze(maze, algorithms)
         elif keycode == 50:
-            if self.route_visible:
-                self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
-                self.m.mlx_put_image_to_window(
-                    self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
-                self.route_visible = False
-            else:
-                self.generate_invisible_window()
-                self.display_route(maze)
-                self.m.mlx_put_image_to_window(
-                    self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
-                self.route_visible = True
+            self.show_hide_route(maze)
         elif keycode == 51:
-            self.rotate_colors()
-            self.display_maze(maze)
-            self.m.mlx_put_image_to_window(
-                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
-            if self.route_visible:
-                self.display_route(maze)
-            if not self.animation and self.route_visible:
-                self.m.mlx_put_image_to_window(
-                    self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
-            self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
+            self.rotate_colors(maze)
         elif keycode == 52:
             self.m.mlx_loop_exit(self.mlx_ptr)
         return (1)
 
+    def re_generate_maze(self, maze: Maze, algorithms: Algorithms) -> None:
+        """Regenerate the maze and recompute all related structures.
+
+        This method:
+        - Recreates the maze layout
+        - Rebuilds the internal map using the selected algorithm
+        - Solves the maze
+        - Refreshes the graphical representation depending on animation mode
+        - Resets route visibility and redraws the UI menu
+
+        Args:
+        - maze (Maze): The maze instance to regenerate.
+        - algorithms (Algorithms): The algorithm manager used to build the
+        maze.
+        """
+        maze.re_generate()
+        algorithms.create_map(maze)
+        solve_maze(maze)
+        self.generate_black_window()
+        if self.animation:
+            self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+            self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
+        self.generate_invisible_window()
+        self.display_maze(maze)
+        if not self.animation:
+            self.display_route(maze)
+        self.route_visible = False
+        if not self.animation:
+            self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
+        self.m.mlx_put_image_to_window(
+            self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+        self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
+        self.display_menu()
+
+    def show_hide_route(self, maze: Maze) -> None:
+        """Toggle the visibility of the solution route in the maze window.
+
+        If the route is currently visible, it is hidden and the base maze is
+        redrawn.
+
+        If the route is hidden, it is computed and displayed on top of the
+        maze.
+
+        Args:
+        - maze (Maze): The maze instance used to compute the route.
+        """
+        if self.route_visible:
+            self.m.mlx_clear_window(self.mlx_ptr, self.win_ptr)
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+            self.route_visible = False
+        else:
+            self.generate_invisible_window()
+            self.display_route(maze)
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
+            self.route_visible = True
+
+    def rotate_colors(self, maze: Maze) -> None:
+        """Rotate the color palette used in the maze visualization
+
+        This method updates the color scheme, redraws the maze, and updates the
+        solution route if it is currently visible. The display is synchronized
+        with the rendering system.
+
+        Args:
+        - maze (Maze): The maze instance used for rendering.
+        """
+        self.colors.rotate()
+        self.display_maze(maze)
+        self.m.mlx_put_image_to_window(
+            self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
+        if self.route_visible:
+            self.display_route(maze)
+        if not self.animation and self.route_visible:
+            self.m.mlx_put_image_to_window(
+                self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
+        self.m.mlx_sync(self.mlx_ptr, 2, self.win_ptr)
+
     def loop(self) -> None:
         """The main loop of the window"""
         self.m.mlx_loop(self.mlx_ptr)
-
-    def rotate_colors(self) -> None:
-        """Function for rotating colors of the maze"""
-        self.colors.rotate()
 
     def put_pixels_at_img(
             self, pixel_x: int, pixel_y: int, color: int,
             buffer: tuple[memoryview, int, int, int]) -> None:
         """Function for putting specific pixel at the image
 
+        This functions checks the if image use little or big endian
+        and writes the colors at the specified pixel based on the image
+        line length
+
         Args:
         - pixel_x (int): coordinates on x for the pixel
         - pixel_y (int): coordinates on y for the pixel
         - color (int): the color is gonna be used at the pixel
-
-        This functions checks the if image use little or big endian
-        and writes the colors at the specified pixel based on the image
-        line length
+        - buffer (tuple[memoryview, int, int, int]): the buffer to be filled
         """
         endian: int = buffer[3]
         pixel: int = (pixel_y * buffer[2]) + (pixel_x * 4)
@@ -225,15 +286,16 @@ class Graphics:
             color: int = 0xFFFFFFFF) -> None:
         """Main function for drawing lines
 
+        This function calculates the delta_pixels for the line, so he can
+        increment the pixel_x and the pixel_y to make it
+
         Args:
         - x1 (int): the x coordinates where the line starts
         - y1 (int): the y coordinates where the line starts
         - x2 (int): the x coordinates where the line ends
         - y2 (int): the y coordinates where the line ends
+        - buffer (tuple[memoryview, int, int, int]): the buffer to be filled
         - color (int): the color of the line
-
-        This function calculates the delta_pixels for the line, so he can
-        increment the pixel_x and the pixel_y to make it
         """
         delta_x: int = x2 - x1
         delta_y: int = y2 - y1
@@ -256,16 +318,17 @@ class Graphics:
             buffer: tuple[memoryview, int, int, int]) -> None:
         """This function is gonna create a cell with the specified walls
 
+        This function is gonna take the coordinates and generate walls by the
+        integer the cell class has: for example: walls = 3 it gonna have the
+        north and east walls up
+
         Args:
         - x1 (int): coordinate x for the top-left of the square
         - y1 (int): coordinate y for the top-left of the square
         - x2 (int): coordinate x for the bottom-right of the square
         - y2 (int): coordinate y for the bottom-right of the square
         - walls (int): an integer defining the walls at the cell
-
-        This function is gonna take the coordinates and generate walls by the
-        integer the cell class has: for example: walls = 3 it gonna have the
-        north and east walls up
+        - buffer (tuple[memoryview, int, int, int]): the buffer to be filled
         """
         if (walls >= 8):
             walls -= 8
@@ -284,16 +347,7 @@ class Graphics:
                            color=self.colors[0]["walls"])
 
     def display_menu(self) -> None:
-        """Function for displaying the menu
-
-        This functiions displays a menu for the user, so he can
-        make 4 different choices, based on the input number between
-        1 and 4:
-        - 1. Re-generate a new maze
-        - 2. Show/Hide path from entry to exit
-        - 3. Rotate maze colors
-        - 4. Quit
-        """
+        """Function for displaying the menu"""
         print("=== A-Maze-ing ===")
         print("1. Re-generate a new maze")
         print("2. Show/Hide path from entry to exit")
