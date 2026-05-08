@@ -5,7 +5,6 @@ from screeninfo import get_monitors, Monitor
 from collections import deque
 from maze_solver import solve_maze
 from typing import Any
-from Maze_Generator import MazeGenerator
 
 
 class Graphics:

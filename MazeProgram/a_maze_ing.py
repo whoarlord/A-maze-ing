@@ -7,10 +7,10 @@ from maze import Maze
 from Graphics import Graphics
 import maze_solver as maze_solver
 import sys
-from Maze_Generator import MazeGenerator
+from Algorithms import Algorithms
 
 
-def main():
+def main() -> None:
 
     parser = Parser()
     dictionary: dict[str: Any] = {}
@@ -33,16 +33,12 @@ def main():
     dictionary = dict(
         map(lambda item: (item[0].lower(), item[1]),
             dictionary.items()))
-    """ maze = Maze(**dictionary)
+    maze = Maze(**dictionary)
     algorithms = Algorithms()
     algorithms.create_map(maze)
     maze_solver.solve_maze(maze)
     graphics = Graphics(maze)
-    graphics.display_menu(maze, algorithms) """
-    generator = MazeGenerator(dictionary)
-    maze_solver.solve_maze(generator.maze)
-    graphics = Graphics(generator.maze)
-    graphics.display_menu(generator)
+    graphics.display_menu(maze, algorithms)
 
 
 if __name__ == "__main__":
