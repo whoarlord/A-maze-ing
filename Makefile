@@ -5,7 +5,6 @@ VIRTUALENV= MazeEnv
 PYTHON=$(VIRTUALENV)/bin/python3
 PIP=$(VIRTUALENV)/bin/pip
 
-MINILIBX=mlx_CLXV
 MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
 DEPENDENCIES=MazeProgram/requirements.txt
 
@@ -20,18 +19,14 @@ all: install run
 install:
 	$(PIP) install -r $(DEPENDENCIES)
 
-$(MLX): install
-	$(MAKE) -C $(MINILIBX)
-
-run: $(VIRTUALENV)
+run: $(VIRTUALENV) install
 	$(PYTHON) $(MAIN) $(MAP)
 
-debug:
-	$(PYTHON) $(DEBUGGER) $(MAIN)
+debug: $(VIRTUALENV)
+	$(PYTHON) $(DEBUGGER) $(MAIN) $(MAP) </dev/tty
 
 $(VIRTUALENV):
 	python3 -m venv $(VIRTUALENV)
-
 
 clean:
 	py3clean .

@@ -60,7 +60,7 @@ class InvalidValueError(Exception):
     """
 
     def __init__(
-            self, line: str, value: int, limit, limit_name: str) -> None:
+            self, line: str, value: int, limit: int, limit_name: str) -> None:
 
         if value >= limit:
             message = f" The value: {value} can't be bigger or equal than the {
@@ -82,3 +82,16 @@ class SeedError(Exception):
     def __init__(self, line: str) -> None:
         super().__init__(
             f"Error on line: '{line}'. the value must be superior than 0")
+
+
+class OrderError(Exception):
+    """Exception for order errors
+
+    Atributtes:
+    - line (str): the specific line were the error is
+    """
+
+    def __init__(self, line: str) -> None:
+        super().__init__(
+            f"Error on line: '{line}'. Please WIDTH"
+            "and HEIGHT must go before seed")
