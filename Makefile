@@ -7,6 +7,8 @@ PIP=$(VIRTUALENV)/bin/pip
 
 MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
 DEPENDENCIES=requirements.txt
+MAZEVERSION=0.7
+MAZEPROGRAM=mazeprogram-$(MAZEVERSION)-py3-none-any.whl
 
 MAIN=a_maze_ing.py
 
@@ -28,8 +30,11 @@ debug: $(VIRTUALENV)
 $(VIRTUALENV):
 	python3 -m venv $(VIRTUALENV)
 
-build:
+build: 
 	$(PYTHON) -m build
+
+install-module: build
+	pip install dist/$(MAZEPROGRAM)
 
 clean:
 	py3clean .
@@ -43,4 +48,4 @@ lint-strict:
 	flake8 MazeProgram
 	mypy MazeProgram --strict
 
-SILENT: all install run debug env clean lint lint-strict
+SILENT: all install run debug build install clean lint lint-strict
