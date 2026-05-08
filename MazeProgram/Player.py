@@ -5,34 +5,7 @@ class Player:
         self.x = x
         self.y = y
         self.movements: list[str] = []
-
-    def can_move_to(self, direction: str, maze: Maze) -> bool:
-
-        player_cell = maze.get_cell(self.x, self.y)
-        match direction:
-            case "E":
-                if not player_cell.has_wall("E"):
-                    return True
-                else:
-                    return False
-
-            case "W":
-                if not player_cell.has_wall("W"):
-                    return True
-                else:
-                    return False
-
-            case "N":
-                if not player_cell.has_wall("N"):
-                    return True
-                else:
-                    return False
-
-            case "S":
-                if not player_cell.has_wall("S"):
-                    return True
-                else:
-                    return False
+        self.contador = 0
 
     def get_direction(self, coords: tuple[int, int]) -> str:
 
@@ -51,19 +24,35 @@ class Player:
         match direction:
             case "E":
                 self.x += 1
-                self.movements.append("E")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "W"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("E")
 
             case "W":
                 self.x -= 1
-                self.movements.append("W")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "E"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("W")
 
             case "N":
                 self.y -= 1
-                self.movements.append("N")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "S"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("N")
 
             case "S":
                 self.y += 1
-                self.movements.append("S")
+                if (self.movements and self.movements[len(self.movements) - 1]
+                        == "N"):
+                    self.movements.pop()
+                else:
+                    self.movements.append("S")
 
     def get_last_movement(self) -> str:
 
@@ -71,3 +60,41 @@ class Player:
             return self.movements[len(self.movements) - 1]
         else:
             return "No movements yet"
+
+    def last_coordenate(self) -> tuple[int, int]:
+
+        match self.get_last_movement():
+            case "N":
+                return self.x, (self.y + 1)
+            case "S":
+                return self.x, (self.y - 1)
+            case "E":
+                return (self.x - 1), self.y
+            case "W":
+                return (self.x + 1), self.y
+
+    def print_path(self) -> None:
+
+        for elem in self.movements:
+            print(f"{elem}", end="")
+
+    def path_tostring(self) -> str:
+
+        string = ""
+        for elem in self.movements:
+            string += elem
+
+        return string
+
+    def backtracking(self) -> None:
+
+        direction = self.movements.pop()
+        match direction:
+            case "N":
+                self.y += 1
+            case "S":
+                self.y -= 1
+            case "E":
+                self.x -= 1
+            case "W":
+                self.x += 1
