@@ -187,7 +187,7 @@ def move_player(maze: Maze, player: Player
                 such as his actual position in the maze.
     """
 
-    x, y = maze.find_lowest_neighbour((player.x, player.y), player)
+    x, y = maze.find_lowest_neighbour((player.x, player.y))
     player.move_to(player.get_direction((x, y)))
 
     return (player.x, player.y)

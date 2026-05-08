@@ -1,5 +1,4 @@
 from functools import reduce
-from .Player import Player
 
 
 class Cell:
@@ -332,8 +331,7 @@ class Maze:
         result += "\n"
         return result
 
-    def find_lowest_neighbour(self, cell: tuple[int, int],
-                              player: Player) -> tuple[int, int]:
+    def find_lowest_neighbour(self, cell: tuple[int, int]) -> tuple[int, int]:
         """Calculates the lowest cost neighbour for the floodfill"""
         x, y = cell
         posible_moves: dict[tuple[int, int], int] = {}
@@ -359,17 +357,7 @@ class Maze:
 
         return_x: int
         return_y: int
-
-        all_routed: bool = True
-        for coords in result.keys():
-            return_x, return_y = coords
-            if not self.get_cell(return_x, return_y).routed:
-                all_routed = False
-                break
-
-        if all_routed:
-            player.backtracking()
-            return player.x, player.y
+        return_x, return_y = list(result.keys())[0]
 
         self.get_cell(return_x, return_y).routed = True
         return return_x, return_y
