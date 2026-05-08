@@ -105,15 +105,15 @@ class Parser:
                         raise PerfectError(line)
 
                 case "DISPLAY_MODE":
-                    if value.capitalize() == "Normal":
+                    if value == "Normal":
                         dictionary.update({"Animation": False})
                     elif value == "Animated":
                         dictionary.update({"Animation": True})
                     else:
                         raise DisplayModeError(line)
                 case "ALGORITHM":
-                    if value.lower() == "kruskal" or value.lower() == "prim":
-                        dictionary.update({parameter: value.lower()})
+                    if value == "kruskal" or value == "prim":
+                        dictionary.update({parameter: value})
                     else:
                         raise AlgorithmError(line)
                 case _:

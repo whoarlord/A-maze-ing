@@ -8,7 +8,6 @@ class Player:
         self.x = x
         self.y = y
         self.movements: list[str] = []
-        self.contador = 0
 
     def can_move_to(self, direction: str, maze: "Maze") -> bool:
 
@@ -117,23 +116,11 @@ class Player:
 
         return string
 
-    """ def backtracking(self, maze: "Maze", posible_moves: list
+    def backtracking(self, maze: "Maze", posible_moves: list
                      [tuple[int, int]]) -> None:
 
-        testeo: list[str] = self.movements
         while not ((self.x, self.y) in posible_moves):
-
-            try:
-                direction = self.movements.pop()
-            except Exception:
-                from Graphics import Graphics
-                from Algorithms import Algorithms
-                self.movements = testeo
-                print(testeo)
-                graphics = Graphics(maze)
-                algorithms = Algorithms()
-                graphics.display_menu(maze, algorithms)
-
+            direction = self.movements.pop()
             match direction:
                 case "N":
                     if not ((self.x, self.y+1) in posible_moves):
@@ -150,20 +137,7 @@ class Player:
                 case "W":
                     if not ((self.x-1, self.y) in posible_moves):
                         maze.get_cell(self.x, self.y).routed = False
-                    self.x += 1 """
-
-    def backtracking(self) -> None:
-
-        direction = self.movements.pop()
-        match direction:
-            case "N":
-                self.y += 1
-            case "S":
-                self.y -= 1
-            case "E":
-                self.x -= 1
-            case "W":
-                self.x += 1
+                    self.x += 1
 
 
 class Cell:
@@ -184,13 +158,9 @@ class Cell:
         self.E = 1
         self.W = 1
 
-    def cell_42(self, x: int, y: int, maze: "Maze") -> None:
+    def cell_42(self):
         self.block_42 = True
         self.cover_all()
-        maze.get_cell(x+1, y).W = 1
-        maze.get_cell(x-1, y).E = 1
-        maze.get_cell(x, y+1).N = 1
-        maze.get_cell(x, y-1).S = 1
 
     def uncover_dir_flex(self, visiting_cell: "Cell", dir: int) -> None:
         if dir == 0:
@@ -337,22 +307,19 @@ class Maze:
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42(
-                        moving_x, moving_y, self)
+                    self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_x == x1 + 1 and moving_y - y1 == 2):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42(
-                        moving_x, moving_y, self)
+                    self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_x == x1 + 2 and moving_y - y1 >= 2):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42(
-                        moving_x, moving_y, self)
+                    self.get_cell(moving_x, moving_y).cell_42()
                 elif ((moving_y == y1 or moving_y == y1 + 2
                        or moving_y == y1 + 4)
                       and moving_x - x1 > 3):
@@ -360,23 +327,19 @@ class Maze:
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42(
-                        moving_x, moving_y, self)
+                    self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_y == y1 + 1 and moving_x - x1 == 6):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(moving_x, moving_y).cell_42(
-                        moving_x, moving_y, self)
+                    self.get_cell(moving_x, moving_y).cell_42()
                 elif (moving_y == y1 + 3 and moving_x - x1 == 4):
                     if self.check_42_collisiones(moving_x, moving_y):
                         print("The number 42 cannot be printed cause of "
                               "collision")
                         return (1)
-                    self.get_cell(
-                        moving_x, moving_y).cell_42(
-                        moving_x, moving_y, self)
+                    self.get_cell(moving_x, moving_y).cell_42()
                 moving_x += 1
             moving_y += 1
         return (0)
@@ -487,14 +450,3 @@ class Maze:
             f.write(f"{self.exit[0]},{self.exit[1]}\n")
             f.write(f"{solution}\n\n")
         print(f"Seed:{self.seed}\n")
-
-    def print_wight_map(self):
-
-        # Metodo de testeo, luego borrar
-
-        print("Weight Map:")
-        for i in range(self.height):
-            for j in range(self.width):
-                print(self.maze_map[i][j].weight, " ", end="")
-            print("")
-        print()
