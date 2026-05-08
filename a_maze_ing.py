@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-from Parser import Parser
-from errors import ParseError, PerfectError, InvalidValueError
+from MazeProgram import Parser
+from MazeProgram import ParseError, PerfectError, InvalidValueError
+from MazeProgram import Maze
+from MazeProgram import Algorithms
+from MazeProgram.Graphics import Graphics
+from MazeProgram import solve_maze
 from typing import Any
-from maze import Maze
-from Algorithms import Algorithms
-from Graphics import Graphics
-import maze_solver as maze_solver
 import sys
 
 
@@ -40,7 +40,7 @@ def main():
         sys.set_int_max_str_digits(maze.width * maze.height * 10)
     algorithms = Algorithms()
     algorithms.create_map(maze)
-    maze_solver.solve_maze(maze)
+    solve_maze(maze)
     Graphics(maze)
 
 

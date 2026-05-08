@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from errors import (ParseError, PerfectError, InvalidValueError,
-                    DisplayModeError, AlgorithmError, SeedError, OrderError)
+from .errors import (ParseError, PerfectError, InvalidValueError,
+                     DisplayModeError, AlgorithmError, SeedError, OrderError)
 from typing import TypedDict
 import sys
 
