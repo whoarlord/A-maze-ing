@@ -144,10 +144,10 @@ class Graphics:
                     self.mlx_ptr, self.win_ptr, self.maze_img_ptr, 0, 0)
                 self.route_visible = False
             else:
+                self.generate_invisible_window()
                 self.display_route(maze)
                 self.m.mlx_put_image_to_window(
                     self.mlx_ptr, self.win_ptr, self.route_img_ptr, 0, 0)
-                self.generate_invisible_window()
                 self.route_visible = True
         elif keycode == 51:
             self.rotate_colors()
@@ -314,6 +314,7 @@ class Graphics:
         """
         initial_x: int = 0
         actual_y: int = 0
+
         increment_x: int = int(
             ((self.win_width - self.wall_multiplier) / maze.width))
         increment_y: int = int(

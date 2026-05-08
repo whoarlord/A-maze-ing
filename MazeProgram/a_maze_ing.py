@@ -41,7 +41,7 @@ def main():
     algorithms = Algorithms()
     algorithms.create_map(maze)
     maze_solver.solve_maze(maze)
-    graphics = Graphics(maze)
+    Graphics(maze)
 
 
 if __name__ == "__main__":
