@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from MazeProgram import Parser, Config, RawConfig
-from MazeProgram import ParseError, PerfectError, InvalidValueError
-from MazeProgram import Maze
-from MazeProgram import Algorithms
-from MazeProgram.Graphics import Graphics
-from MazeProgram import solve_maze
+from MazeGen import Parser, Config, RawConfig
+from MazeGen import ParseError, PerfectError, InvalidValueError
+from MazeGen import Maze
+from MazeGen import Algorithms
+from MazeGen import Graphics
+from MazeGen import solve_maze
 import sys
 
 
@@ -22,6 +22,7 @@ def main() -> None:
         with open(sys.argv[1], "r") as file:
             for line in file.readlines():
                 parser.parse_line(line.strip(), dictionary)
+        parser.entry_checker(dictionary)
     except (ParseError, PerfectError, InvalidValueError,
             Exception) as e:
         print(f"{e}")
@@ -35,7 +36,7 @@ def main() -> None:
     if (limits > 640):
         sys.set_int_max_str_digits(maze.width * maze.height * 10)
     algorithms = Algorithms()
-    algorithms.create_map(maze)
+    algorithms.create_maze(maze)
     solve_maze(maze)
     Graphics(maze)
 

@@ -1,8 +1,9 @@
 **/__pycache__
+.mypy_cache
 .vscode
 MazeEnv
 maze.txt
 MazeProgram/config.txt
 dist
-a_maze_ing.egg-info
-MazeProgram.egg-info/*
+mazegen.egg-info
+output_validator.py

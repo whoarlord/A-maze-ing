@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+class MandatoryParameterError(Exception):
+    """Exception for the lack of mandatory parameters errors
+
+    Attributes:
+        line (str): the specific line were the error is
+    """
+
+    def __init__(self, parameter: str) -> None:
+        super().__init__(
+            f"{parameter} must be in the configuration file")
+
+
 class ParseError(Exception):
     """Exception for parsing errors
 

@@ -8,7 +8,7 @@ PIP=$(VIRTUALENV)/bin/pip
 MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
 DEPENDENCIES=requirements.txt
 MAZEVERSION=0.7
-MAZEPROGRAM=mazeprogram-$(MAZEVERSION)-py3-none-any.whl
+MAZEPROGRAM=mazegen-$(MAZEVERSION)-py3-none-any.whl
 
 MAIN=a_maze_ing.py
 
@@ -16,12 +16,12 @@ TOCLEAN=.mypy_cache
 
 MYPYFLAGS=--warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
-all: install run
+all: run
 
-install:
+install: $(VIRTUALENV)
 	$(PIP) install -r $(DEPENDENCIES)
 
-run: $(VIRTUALENV) install
+run: install
 	$(PYTHON) $(MAIN) $(MAP)
 
 debug: $(VIRTUALENV)
@@ -30,11 +30,12 @@ debug: $(VIRTUALENV)
 $(VIRTUALENV):
 	python3 -m venv $(VIRTUALENV)
 
-build: 
+build: install
 	$(PYTHON) -m build
+	cp dist/$(MAZEPROGRAM) mazegen_module/
 
 install-module: build
-	pip install dist/$(MAZEPROGRAM)
+	$(PIP) install mazegen_module/$(MAZEPROGRAM)
 
 clean:
 	py3clean .

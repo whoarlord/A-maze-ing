@@ -117,12 +117,12 @@ class Maze:
         self.animation = animation
         self.algorithm = algorithm
         self.seed = seed
-        self.maze_map: list[list[Cell]] = self.create_map()
+        self.maze_map: list[list[Cell]] = self.create_maze()
         if (self.create_42()):
-            self.maze_map = self.create_map()
+            self.maze_map = self.create_maze()
         self.route: str = ""
 
-    def create_map(self) -> list[list[Cell]]:
+    def create_maze(self) -> list[list[Cell]]:
         """Function for initializing the cells"""
         result: list[list[Cell]] = []
         for i in range(self.height):
@@ -139,9 +139,9 @@ class Maze:
     def re_generate(self) -> None:
         """function for re-generating the whole maze"""
         self.seed = 0
-        self.maze_map = self.create_map()
+        self.maze_map = self.create_maze()
         if (self.create_42()):
-            self.maze_map = self.create_map()
+            self.maze_map = self.create_maze()
 
     def not_visited_neighbours(self, x: int, y: int) -> list[int]:
         """Function for obteining the not visite cell neighbours

@@ -75,7 +75,11 @@ class Graphics:
         self.route_visible: bool = False
         self.wall_multiplier: int = 5
         self.animation = maze.animation
-        self.initialize_animation(maze)
+        try:
+            self.initialize_animation(maze)
+        except (KeyboardInterrupt, EOFError):
+            print("do not pause the program like this")
+            exit(1)
 
     def initialize_animation(self, maze: Maze) -> None:
         if self.animation:
@@ -163,7 +167,7 @@ class Graphics:
                 maze.
         """
         maze.re_generate()
-        algorithms.create_map(maze)
+        algorithms.create_maze(maze)
         solve_maze(maze)
         self.generate_black_window()
         if self.animation:

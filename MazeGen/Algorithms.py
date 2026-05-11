@@ -5,7 +5,7 @@ from random import randint, shuffle, seed
 class Algorithms:
     """Class representing the object for making cells"""
 
-    def create_map(self, maze: Maze) -> None:
+    def create_maze(self, maze: Maze) -> None:
         """This function creates the maze based on the config file
 
         This function creates a seed or uses the seed from the maze if it is
@@ -21,9 +21,11 @@ class Algorithms:
         else:
             seed(maze.seed)
         if maze.algorithm == "kruskal":
-            self.create_map_kruskal(maze)
+            self.create_maze_kruskal(maze)
         elif maze.algorithm == "prim":
-            self.create_map_prim(maze)
+            self.create_maze_prim(maze)
+        if not maze.perfect:
+            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def create_seed(self, maze: Maze) -> None:
         """Function for creating a random seed for the maze"""
@@ -34,7 +36,7 @@ class Algorithms:
         maze.seed = number
         seed(number)
 
-    def create_map_kruskal(self, maze: Maze) -> None:
+    def create_maze_kruskal(self, maze: Maze) -> None:
         """Function for creating a map using the kruskal algorithm
 
         This function put up all the walls of the maze and then it gives to
@@ -78,8 +80,6 @@ class Algorithms:
                     temp_cell, directions[rand_dir])
                 self.update_group(temp_x, temp_y, cell_group,
                                   cell_list, cell_group[i])
-        if not maze.perfect:
-            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def update_group(self, x: int, y: int, cell_group: list[int],
                      cell_list: list[tuple[int, int]], new_group: int) -> None:
@@ -151,7 +151,7 @@ class Algorithms:
             directions.append(3)
         return directions
 
-    def create_map_prim(self, maze: Maze) -> None:
+    def create_maze_prim(self, maze: Maze) -> None:
         """Function for creating a maze based on prim algorithm
 
         This function receives creates a maze based on the prim algorithm
@@ -185,8 +185,6 @@ class Algorithms:
             actual_cell.uncover_dir(temp_cell, directions[rand_dir])
 
             stack.append((temp_x, temp_y))
-        if not maze.perfect:
-            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def check_neighbours_for_routes(
             self, maze: Maze, threshold: int, x: int, y: int) -> None:

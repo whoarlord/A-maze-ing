@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from .errors import (ParseError, PerfectError, InvalidValueError,
-                     DisplayModeError, AlgorithmError, SeedError, OrderError)
+from .errors import (
+    ParseError, PerfectError, InvalidValueError, DisplayModeError,
+    AlgorithmError, SeedError, OrderError, MandatoryParameterError)
 from typing import TypedDict
 import sys
 
@@ -43,13 +44,15 @@ class Parser:
 
         Args:
             line (str): the line which is being readed from the config file
-            dictionary (RawConfig): the dictionary representing the parameters of
-                the maze
-
+            dictionary (RawConfig): the dictionary representing the parameters
+                of the maze
         """
 
-        if "=" in line:
-
+        if len(line) == 0:
+            raise ParseError(line)
+        elif line[0] == '#':
+            return
+        elif "=" in line:
             parameter, value = line.split("=")
 
             if value == "":
@@ -96,13 +99,17 @@ class Parser:
                             if dictionary.get("EXIT") is not None:
                                 if dictionary.get("EXIT") == dictionary.get(
                                         "ENTRY"):
-                                    raise Exception(f"error in line {line}")
+                                    raise Exception(
+                                        f"error in line {line}, it collides "
+                                        "with the EXIT")
                         else:
                             dictionary.update({parameter: (x_int, y_int)})
                             if dictionary.get("ENTRY") is not None:
                                 if dictionary.get("ENTRY") == dictionary.get(
                                         "EXIT"):
-                                    raise Exception(f"error in line {line}")
+                                    raise Exception(
+                                        f"error in line {line}, it collides "
+                                        "with the ENTRY")
 
                     except ValueError as e:
                         raise Exception(
@@ -155,6 +162,21 @@ class Parser:
                     raise Exception(f"Unknown value on line: {line}")
         else:
             raise ParseError(line)
+
+    def entry_checker(self, dictionary: RawConfig) -> None:
+        """checks if any of the mandatory parameters is missing"""
+        if dictionary.get("WIDTH") is None:
+            raise MandatoryParameterError("WIDTH")
+        elif dictionary.get("HEIGHT") is None:
+            raise MandatoryParameterError("HEIGHT")
+        elif dictionary.get("ENTRY") is None:
+            raise MandatoryParameterError("ENTRY")
+        elif dictionary.get("EXIT") is None:
+            raise MandatoryParameterError("EXIT")
+        elif dictionary.get("OUTPUT_FILE") is None:
+            raise MandatoryParameterError("OUTPUT_FILE")
+        elif dictionary.get("PERFECT") is None:
+            raise MandatoryParameterError("PERFECT")
 
     def complete_dictionary(self, dictionary: RawConfig) -> Config:
         """This function completes the dictionary with the 3 optional values"""
