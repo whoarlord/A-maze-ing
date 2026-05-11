@@ -19,8 +19,8 @@ class Graphics:
     Attributes:
         m (Mlx): the main class of the minilibx
         mlx_ptr: the pointer to the mlx
-        win_height (int): the height of the window base on the monitor
-        win_width (int): the width of the window base on the monitor
+        win_height (int): the height of the window based on the monitor
+        win_width (int): the width of the window based on the monitor
         win_ptr: A pointer to the window we are gonna display
         maze_img_ptr: A pointer to the image containing the maze
         maze_buffer: The buffer of the maze image
