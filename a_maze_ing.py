@@ -36,7 +36,7 @@ def main() -> None:
     if (limits > 640):
         sys.set_int_max_str_digits(maze.width * maze.height * 10)
     algorithms = Algorithms()
-    algorithms.create_map(maze)
+    algorithms.create_maze(maze)
     solve_maze(maze)
     Graphics(maze)
 

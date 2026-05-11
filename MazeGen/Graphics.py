@@ -167,7 +167,7 @@ class Graphics:
                 maze.
         """
         maze.re_generate()
-        algorithms.create_map(maze)
+        algorithms.create_maze(maze)
         solve_maze(maze)
         self.generate_black_window()
         if self.animation:

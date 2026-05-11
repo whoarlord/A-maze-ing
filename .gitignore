@@ -6,3 +6,4 @@ maze.txt
 MazeProgram/config.txt
 dist
 mazegen.egg-info
+output_validator.py
