@@ -2,7 +2,7 @@
 
 # A-maze-ing — Proyecto 42
 
-El objetivo de este proyecto es implementar un generador de laberintos en Python que reciba un archivo de configuración, gener un laberinto, posiblemente perfecto(con un único camino entre la entrada(entry) y la salida(exit)), y escriba dicho laberinto a un archivo usando hexadecimales para representar muros. También se deberá proveer una reprentación visual del laberinto generdo.
+El objetivo de este proyecto es implementar un generador de laberintos en Python que reciba un archivo de configuración, genere un laberinto, posiblemente perfecto(con un único camino entre la entrada(entry) y la salida(exit)), y escriba dicho laberinto a un archivo usando hexadecimales para representar muros. También se deberá proveer una reprentación visual del laberinto generdo.
 
 ---
 
@@ -11,11 +11,13 @@ El objetivo de este proyecto es implementar un generador de laberintos en Python
 1. [Descripción](#descripción)  
 1.1. [Descripción General](#descripción-general)
 2. [Instrucciones](#instrucciones)  
-2.1. [Estructura del Proyecto](#ejecución-del-programa)  
-2.1.1 [Reutilización del código](#reutilización-del-código)  
-2.2. [Ejecución del Programa](#selectores-de-estrategia)  
-3. [Algoritmos empleados para la generación del laberinto](#algoritmos-implementados)  
+2.1. [Ejecución del Programa](#ejecución-del-programa)  
+2.2. [Estructura del Proyecto](#estructura-del-proyecto)  
+2.2.1 [Reutilización del código](#reutilización-del-código)  
+3. [Algoritmos empleados para la generación del laberinto](#algoritmos-empleados-para-la-generación-del-laberinto)  
 4. [Contribuciones](#contribuciones)   
+4.1. [Roles del equipo](#roles-del-equipo)  
+4.2. [Planificación del proyecto](#planificación-del-proyecto)  
 5. [Recursos](#recursos)
 ---
 
@@ -50,7 +52,7 @@ PERFECT=True
 ALGORITHM=prim
 ```
 
-Una vez generado el laberinto, se debe escribir en un archivo de salida, usando un digito hexadecimal para representar cada celda. El hexadecimal representa los muros basado en la siguiente tabla:
+Una vez generado el laberinto, éste se debe escribir en un archivo de salida, usando un digito hexadecimal para representar cada celda. El hexadecimal representa los muros basado en la siguiente tabla:
 
 
 | Bit | Dirección |
@@ -60,13 +62,14 @@ Una vez generado el laberinto, se debe escribir en un archivo de salida, usando 
 | **2** | Sur |
 | **3** | Oeste |
 
-Si hay un muro, se representa con un 1, y si no hay muro se representa con 0.
-Ejemplo:  3 (binario 0011) significa que hay muros al **Norte** y al **Este**. A
-(binario 1010) significa que hay muros al **Este** y al **Oeste**.
+Si hay un muro, se representa con un 1, y si no hay muro se representa con 0.  
+Ejemplos: 
+ - 3 (binario 0011) significa que hay muros al **Norte** y al **Este**.  
+ - A(binario 1010) significa que hay muros al **Este** y al **Oeste**.
 
 Las celdas se escriben fila a fila, escribiendo una fila en cada linea. Al terminar de escribir el laberinto, se ha de dejar un salto de linea y después se han de insertar tres datos, uno en cada linea: punto de entrada al laberinto, punto de salida del laberinto y el camino valido más corto desde la entrada hasta la salida.
 
-Siguiendo el ejemplo del config.txt descrito antes, a continuación se describe un ejemplo de un output de salida(maze.txt en el ejemplo de arriba):
+Siguiendo el ejemplo del config.txt descrito antes, a continuación se muestra un ejemplo de un output de salida(maze.txt en el ejemplo de arriba):
 
 ```txt
 BD5391553B95517955179153B
@@ -101,6 +104,8 @@ SSENESEEENNEEESWWSESSWSWSWNNNWSSSSEEESWWWWSSENESEESSWWWSSWNWNWSSESEESENNNESSSEEN
 ```
 
 # Instrucciones
+
+## Ejecución del programa
 
 ## Estructura del proyecto
 
@@ -156,7 +161,6 @@ class Cell:
     E: int
     W: int
 ```
-
 `visited` = un booleano que se utiliza para la generación del laberinto.  
 `block_42` = un booleano para saber si la celda pertenece al 42 que hay que incrustar en el laberinto.  
 `routed` = un booleano que se utiliza para aplicar el algoritmo flood fill.  
@@ -164,14 +168,130 @@ class Cell:
 `N` = va a tener valor 1 o 0, dependiendo de si hay muro en la dirección norte o no.  
 `S` = va a tener valor 1 o 0, dependiendo de si hay muro en la dirección sur o no.  
 `E` = va a tener valor 1 o 0, dependiendo de si hay muro en la dirección este o no.  
-`W` = va a tener valor 1 o 0, dependiendo de si hay muro en la dirección oeste o no.  
+`W` = como lo supiste, va a tener valor 1 o 0, dependiendo de si hay muro en la dirección oeste o no.  
+
+
+### `Maze`
+
+La clase Maze sirve para representar el laberinto, así como ciertos atributos asociados para la ejecución del programa.
+
+```Python
+class Maze:
+    width: int
+    height: int
+    entry: tuple[int, int]
+    exit: tuple[int, int]
+    output_file: str
+    perfect: bool
+    animation: boolean
+    algorithm: str
+    seed: int
+    maze_map: list[list[Cell]]
+```
+
+`width` = la anchura del laberinto, recibida desde el archivo config.txt.  
+`height` = la altura del laberinto, recibida desde el archivo config.txt.  
+`entry` = el punto de entrada del laberinto, recibido desde el archivo config.txt. Partiremos desde este punto para encontrar la solución.  
+`exit` = el punto de salida del laberinto, recibido desde el archivo config.txt. Este será el destino para encontrar la solución.  
+`output_file` = el nombre o la ruta del archivo de salida que se va a generar, recibido desde el archivo config.txt.  
+`perfect` = un booleano que dictamina si el laberinto es perfecto(tiene una única solución) o no, recibido desde el archivo config.txt.  
+`animation` = un booleano que indica si se debe mostrar animación al generar el laberinto o no, recibido desde el archivo config.txt.  
+`algorithm` = el algoritmo específico que se va a utilizar para la generación del laberinto. Si no se especifica en el config.txt, por defecto se usa el Prim.  
+`seed` = la semilla para generar el laberinto.  
+`maze_map` = la matriz con la representación del laberinto.  
+
+### `Graphics`
+
+La clase Graphics sirve para crear la representación gráfica del laberinto.
+
+```Python
+class Graphics:
+    m: Mlx
+    mlx_ptr: void puntero de una libreria de c
+    win_height: int
+    win_width: int
+    win_ptr: void puntero de una libreria de c
+    maze_img_ptr: void puntero de una libreria de c
+    maze_buffer: tuple[memoryview[int], int, int, int]
+    route_img_ptr: void puntero de una libreria de c
+    route_buffer: tuple[memoryview[int], int, int, int]
+    wall_multiplier: int
+    colors: deque[dict[int]]
+```
+
+`m` = la clase principal de la minilibx.  
+`mlx_ptr` = un puntero a la mlx.  
+`win_heighty` = la anchura de la ventana gráfica basada en el monitor.  
+`win_width` = la altura de la ventana gráfica basada en el monitor.  
+`win_ptr` = un puntero a la ventana gráfica que vamos a mostrar.  
+`maze_img_ptr` = un puntero a la imagen que contiene el laberinto creado.  
+`maze_buffer` = el buffer de la imagen del laberinto.  
+`route_img_ptr` = un puntero a la imagen que contiene la ruta desde el punto de entrada hasta el punto de salida.  
+`route_buffer` = el buffer de la imagen de la ruta.  
+`wall_multiplier` = un valor para aumentar la anchura de los muros en la imagen.  
+`colors` = los diferentes colores del laberinto.  
+
+### `Algorithms`
+
+La clase Algorithms es una clase que representa el objeto para la creación del laberinto. Como tal, esta clase no tiene ningún atributo, solo metodos. Los más importantes son los siguientes:
+
+```Python
+class Algorithms:
+    create_map(self, maze: Maze) -> None:
+    create_seed(self, maze: Maze) -> None:
+    create_map_kruskal(self, maze: Maze) -> None:
+    create_map_prim(self, maze: Maze) -> None:
+```
+
+`create_map` = este método crea una semilla o utiliza la del config.txt si hay alguna y crea un laberinto basando en el algoritmo especificado en el atributo algorithm de la clase Maze.  
+`create_seed` = este método crea una semilla aleatoria para el laberinto.  
+`create_map_kruskal` = este método crea un laberinto utilizando el algoritmo kruskal, el cual se explicará más adelante.  
+`create_map_prim` = este método crea un laberinto utilizando el algoritmo prim, el cual se explicará más adelante.  
 
 ### Reutilización del código
-
-## Ejecución del programa
 
 # Algoritmos empleados para la generación del laberinto
 
 # Contribuciones
 
+## Roles del equipo
+
+El rol principal de Iker durante este proyecto ha sido el de graphic designer(creador de la rumba). Se ha encargado sobretodo de la integración de la minilib(🫡). También se ha encargado de la implementación de los algoritmos de creación del laberinto.
+
+El rol prinicpal de Ander durante este proyecto ha sido el de software engeneer(creador del pos=0). Se ha encargado principalmente de la implementación del algoritmo flood fill, lo cual puede no parecer demasiado mirando el código, ya que más de la mitad del trabajo se fué a la basura por querer complicar las cosas de más(facilmente 30 horas de trabajo tiradas 😭).
+
+## Planificación del proyecto
+
+Para la planificación del proyecto nos basamos en la metodología Agile. Planificamos 4 sprints, de una semana cada uno. En el primer sprint, identificamos y dividimos las tareas principales del proyecto. Una vez divididas las tareas, cada miembro del equipo se dispuso a buscar la información pertoinente.
+
+En el segundo sprint, lo primero que hicimos fue una reunión para compartir la información recabada y terminar de decidir los últimos detalles sobre el reparto de tareas. Después de ello, el objetivo de este sprint fué tener listo el parseo de los datos de entrada y la generación del laberinto, de momento independientes uno del otro.
+
+En el tercer sprint, lo primero que hicimos fue juntar el parseo de los datos de entrada con la generación del laberinto creados en el sprint anterior. Una vez hecho, el objetivo de este sprint fue generar la interfaz para la representación gráfica del laberinto e implementar el algoritmo para la resolución del laberinto.
+
+En el cuarto y último sprint, lo primero que hicimos fue una reunión para comprobar el estado del proyecto. Una vez aclarado el estado del proyecto y las tareas pendientes, el objetivo de este sprint fue limpiar y pulir el código, así como crear la documentación del proyecto.
+
+En la siguiente tabla se puede ver como se desarrolló la planificación:
+
+
+| Sprint | Objetivo | Se cumplió el objetivo | Razón por la que no |
+|:----------:|:----------:|:----------:|:----------:|
+| **1** | División de tareas y busqueda de información | Si | - |
+| **2** | Crear el parseo de los datos de entrada y la generación del laberinto | Si | - |
+| **3** | Generar la interfaz gráfica e implementar el algoritmo para la resolución del laberinto | No | Sobrecomplicación al querer hacer la implementación de la solución |
+| **4** | Pulir y limpiar el código y crear la documentación | No | Los retrasos acarreados del sprint anterior y motivos personales |
+
+Como se puede ver en la tabla, a partir del tercer sprint hubo problemas que provocaron retrasos en el proyecto. Por un lado, quisimos implementar la resolución del algoritmo utilizando la idea de un robot que se encuentra en un laberinto y tiene que buscar la salida, identificando y actualizando los muros según los iba encontrando. Conseguimos implementarlo para los laberintos perfectos pero a la hora de resolver laberintos imperfectos hubo demasiados problemas y al final decidimos simplificar la solución.
+
+Por otro lado, por motivos personales de uno de los miembros del grupo, el sprint 4 se tuvo que posponer durante una semana, ya que este miembro no iba a poder trabajar en el proyecto durante ese tiempo.
+
+Otro fallo en la planificación fue el dejar la limpieza de codigo y la documentación para el final, ya que hubo que resolver algunos conflictos y refactorizar bastante código el cual se podría haber ahorrado si se hubiera hecho al momento.
+
+Debido a estos problemas, hubo que añadir un sprint más entre el tercero y el cuarto, para terminar con la implementación de la solución y empezar con la limpieza del código.
+
 # Recursos
+
+- **Rayan Bouhal and Niko Paraskevopoulos** — *Maze Solving using Flood Fill Algorithm*.  
+- **Oscar Gonzalez** — *Cómo construir un robot micromouse que resuelve un laberinto* 
+- **Microsiervos** — *Un algoritmo para crear laberintos «interesantes»*
+- **Universitat Politècnica de València** — *algoritmo de Kruskal*
+- **Claude, Copilot y ChatGPT** — *Conceptos clave. Edición del README.*  
