@@ -32,9 +32,10 @@ $(VIRTUALENV):
 
 build: 
 	$(PYTHON) -m build
+	cp dist/$(MAZEPROGRAM) mazegen_module/
 
 install-module: build
-	pip install dist/$(MAZEPROGRAM)
+	$(PIP) install mazegen_module/$(MAZEPROGRAM)
 
 clean:
 	py3clean .

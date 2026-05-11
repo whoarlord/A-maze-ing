@@ -4,7 +4,7 @@ from MazeGen import Parser, Config, RawConfig
 from MazeGen import ParseError, PerfectError, InvalidValueError
 from MazeGen import Maze
 from MazeGen import Algorithms
-from MazeGen.Graphics import Graphics
+from MazeGen import Graphics
 from MazeGen import solve_maze
 import sys
 
