@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-from MazeProgram import Parser, Config, RawConfig
-from MazeProgram import ParseError, PerfectError, InvalidValueError
-from MazeProgram import Maze
-from MazeProgram import Algorithms
-from MazeProgram.Graphics import Graphics
-from MazeProgram import solve_maze
+from MazeGen import Parser, Config, RawConfig
+from MazeGen import ParseError, PerfectError, InvalidValueError
+from MazeGen import Maze
+from MazeGen import Algorithms
+from MazeGen.Graphics import Graphics
+from MazeGen import solve_maze
 import sys
 
 
