@@ -24,6 +24,8 @@ class Algorithms:
             self.create_map_kruskal(maze)
         elif maze.algorithm == "prim":
             self.create_map_prim(maze)
+        if not maze.perfect:
+            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def create_seed(self, maze: Maze) -> None:
         """Function for creating a random seed for the maze"""
@@ -78,8 +80,6 @@ class Algorithms:
                     temp_cell, directions[rand_dir])
                 self.update_group(temp_x, temp_y, cell_group,
                                   cell_list, cell_group[i])
-        if not maze.perfect:
-            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def update_group(self, x: int, y: int, cell_group: list[int],
                      cell_list: list[tuple[int, int]], new_group: int) -> None:
@@ -185,8 +185,6 @@ class Algorithms:
             actual_cell.uncover_dir(temp_cell, directions[rand_dir])
 
             stack.append((temp_x, temp_y))
-        if not maze.perfect:
-            self.create_multiple_routes(maze, min(maze.width, maze.height))
 
     def check_neighbours_for_routes(
             self, maze: Maze, threshold: int, x: int, y: int) -> None:

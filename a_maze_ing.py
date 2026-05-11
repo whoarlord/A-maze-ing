@@ -22,6 +22,7 @@ def main() -> None:
         with open(sys.argv[1], "r") as file:
             for line in file.readlines():
                 parser.parse_line(line.strip(), dictionary)
+        parser.entry_checker(dictionary)
     except (ParseError, PerfectError, InvalidValueError,
             Exception) as e:
         print(f"{e}")
