@@ -15,6 +15,9 @@ El objetivo de este proyecto es implementar un generador de laberintos en Python
 2.2. [Estructura del Proyecto](#estructura-del-proyecto)  
 2.2.1 [Reutilización del código](#reutilización-del-código)  
 3. [Algoritmos empleados para la generación del laberinto](#algoritmos-empleados-para-la-generación-del-laberinto)  
+3.1. [Prim](#prim)  
+3.2. [Kruskal](#kruskal)  
+3.3. [BFS](#bfs)  
 4. [Contribuciones](#contribuciones)   
 4.1. [Roles del equipo](#roles-del-equipo)  
 4.2. [Planificación del proyecto](#planificación-del-proyecto)  
@@ -107,14 +110,35 @@ SSENESEEENNEEESWWSESSWSWSWNNNWSSSSEEESWWWWSSENESEESSWWWSSWNWNWSSESEESENNNESSSEEN
 
 ## Ejecución del programa
 
+Para poder ejecutar este programa vamos a hacer uso de un Makefile, el cual se ocupara de instalar todas las dependencias y ejecutar el programa desde un entorno virtual que él mismo genera.
+
+Para esto, lo mas básico es ejecutar el comando make o make run, el cual se ocupara de crear el entorno virtual, instalar las dependencias correspondientes sobre él, y ejecutar el archivo a_maze_ing.py.
+
+```bash
+make run
+```
+
+Por otro lado tenemos la regla de build, que se ocupa de buildear la carpeta MazeGen, para generar la libreria que luego se puede utilizar fuera del proyecto, y la regla install-module que se ocupa de instalar esta libreria en el environment creado anteriormente (MazeEnv).
+
+```bash
+make build
+make install-module
+```
+
+Además de esto, tenemos las reglas de clean y debug para limpiar el codigo de carpetas innecesarias de cache y para debugar el codigo con pbd.
+
+```bash
+make clean
+make debug
+```
+
 ## Estructura del proyecto
 
 El programa muestra en una interfaz gráfica el laberinto generado, mientras que por la terminal se muestra el menú para poder interactuar con el programa. A continuación se van a desribir las clases más importantes del código.
 
 ### `Parser`
 
-La clase Parser se encarga de verificar los datos introducidos en el archivo de configuración. En caso de error, lanza una excepción para que luego el programa principal la reciba, imprima el error y termine la ejecución.
-Tiene el siguiente TypeDict con todos los parametros de entrada del archivo de configuración:
+La clase Parser se encarga de verificar los datos introducidos en el archivo de configuración. En caso de error, lanza una excepción para que luego el programa principal la reciba, imprima el error y termine la ejecución. La clase no tiene ningún atributo, pero hace uso del siguiente TypeDict con todos los parametros de entrada del archivo de configuración:
 
 ```Python
 class Config(TypedDict):
@@ -250,7 +274,90 @@ class Algorithms:
 
 ### Reutilización del código
 
+Para la reutilización del código hemos implementado un modula llamado MazeGen, el cual contiene todos los elementos necesarios para la generación del laberinto.
+Para poder instanciar el generador tenemos que importar el modulo MazeGen, y con el las clases concretas del Parser y el Maze.
+
+```Python
+from MazeGen import Parser, Maze
+```
+
+La clase Parser nos sirve para poder leer de un archivo con la funcion parse_line() la cual recibe las lineas de un fichero y genera un diccionario con los atributos que desea recibir la clase Maze. Además de parse_line(line, dictionary), el Parser tiene una función llamada entry_checker(dictionary) para comprobar si los atributos obligatorios han sido insertados correctamente, y una última función para generar el diccionario con el que poder generar directamente el laberinto.
+
+```txt
+#Obligatorios
+WIDTH=25
+HEIGHT=25
+ENTRY=0,0
+EXIT=24,24
+OUTPUT_FILE=maze.txt
+PERFECT=True
+#Opcionales
+DISPLAY_MODE=Normal
+ALGORITHM=prim
+```
+
+```Python
+Parser.parse_line(line, dictionary)
+Parser.entry_checker(dictionary)
+dictionary_output = parser.complete_dictionary(dictionary)
+maze = Maze(**dictionary_output)
+```
+
+Una vez que tenemos la estructura inicializada, solo tenemos que llamar a la funcion create_maze(maze) de la clase Algorithms, la cual generará el laberinto basandose en el algoritmo recibido.
+
+```Python
+from MazeGen import Algorithms
+
+Algorithms.create_maze(maze)
+```
+
+Además, en caso de querer sacar la solución más corta del laberinto, tenemos la función solve_maze(maze), la cual recibirá el laberinto, generará una solución y la guardará en la clase del laberinto y en el fichero de output proporcionado.
+
+```Python
+from MazeGen import solve_maze
+
+solve_maze(maze)
+```
+
+Por último, en caso de querer verlo de manera gráfica, pueden instanciar la clase Graphics la cual se ocupará de generar todo lo necesario para crear la representación visual.
+
+```Python
+from MazeGen import Graphics
+
+Graphics(maze)
+```
+
 # Algoritmos empleados para la generación del laberinto
+
+Para la generación de laberintos perfectos hemos hecho uso de dos algoritmos, el algoritmo de Prim y el algoritmo de Kruskal, los cuales generan laberintos perfectos. En caso de necesitar un laberinto imperfecto, hemos partido de estos dos algoritmos y hemos implementado un BFS (Breadth-first search), para destruir muros en base a un threshold.
+
+## Prim
+
+El algoritmo de Prim es un algoritmo sencillo que se basa en ir visitando casillas y levantando muros.
+
+Este algoritmo empieza en una casilla cualquiera, en nuestro caso en la casilla de entry, levanta los cuatro muros sobre esta casilla, la marca como visitada y la añade a un stack, lo único que tiene prohibido este algoritmo es moverse a una casilla que esté puesta como visitada.
+
+Una vez que tenemos este estado, elige una casilla al azar de las diferentes casillas a las que puede moverse que le rodean (las posibles casillas son aquellas que no se salen de las dimensiones del laberinto y no han sido visitadas anteiormente), y se mueve a ella poniendola en visited y levantando todos los muros menos el muro de la casilla de la que viene y a su vez destruyendo el muro correspondiente de la casilla anterior. Después de esto, añade la casilla al stack y vuelve a realizar el mismo proceso descrito en este parrafo.
+
+Esta acción se ejecuta iterativamente hasta que la casilla actual en la que nos encontramos no tiene vecinos que poder visitar, cuando se da ese caso, se hace pop de la última posición metida en el stack (que es la posicion actual), y se vuelve a mirar las casillas adyacentes con la nueva casilla actual, que será la que ahora sea la ultima casilla en el stack.
+
+Este proceso se seguirá haciendo hasta que no queden casillas en el stack, y en ese momento habrá terminado de generarse el laberinto.
+
+## Kruskal
+
+El algoritmo de Kruskal se basa en levantar todos los muros de todas las casillas y establecer un grupo por casilla.
+
+Se considera que dos casillas son de diferente grupo cuando están separadas por muros.
+
+Una vez hecho esto, el algoritmo irá rompiendo muros aleatorios de grupos diferentes para juntar los grupos hasta tener un unico grupo.
+
+### BFS
+
+Por último, el algoritmo de BFS sirve para romper muros de estos laberintos perfectos y así generar nuevas rutas hacia la salida, creando un laberinto imperfecto.
+
+Para esto, lo primero que hacemos es establecer un threshold, que será el mínimo entre la altura y la anchura del laberinto. A continuación, y mediante la busqueda en profundidad, calcularemos la distancia entre dos celdas, y en caso de que sea mayor que el threshold establecido, se destruirá el muro entre ellos.
+
+El algoritmo hara esto para todas las celdas con todos sus vecinos hasta que ya no le queden celdas por revisar.
 
 # Contribuciones
 
@@ -290,8 +397,8 @@ Debido a estos problemas, hubo que añadir un sprint más entre el tercero y el 
 
 # Recursos
 
-- **Rayan Bouhal and Niko Paraskevopoulos** — *Maze Solving using Flood Fill Algorithm*.  
-- **Oscar Gonzalez** — *Cómo construir un robot micromouse que resuelve un laberinto* 
-- **Microsiervos** — *Un algoritmo para crear laberintos «interesantes»*
-- **Universitat Politècnica de València** — *algoritmo de Kruskal*
-- **Claude, Copilot y ChatGPT** — *Conceptos clave. Edición del README.*  
+- **Rayan Bouhal and Niko Paraskevopoulos** — [*Maze Solving using Flood Fill Algorithm*](https://rayanbouhal.com/micromouse/icons/Bouhal-Paraskevopoulos_Paper.pdf)
+- **Oscar Gonzalez** — [*Cómo construir un robot micromouse que resuelve un laberinto*](https://lab.bricogeek.com/tutorial/como-construir-un-robot-micromouse-que-resuelve-un-laberinto/como-resolver-un-laberinto)
+- **Microsiervos** — [*Un algoritmo para crear laberintos «interesantes»*](https://www.microsiervos.com/archivo/ordenadores/algoritmo-laberintos-interesantes.html)
+- **Universitat Politècnica de València** — [*Algoritmo de Kruskal*](https://arodrigu.webs.upv.es/grafos/doku.php?id=algoritmo_kruskal)
+- **Claude, Copilot y ChatGPT** — *Conceptos clave. Edición del README*  
