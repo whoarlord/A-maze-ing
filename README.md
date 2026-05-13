@@ -401,4 +401,4 @@ Debido a estos problemas, hubo que añadir un sprint más entre el tercero y el 
 - **Oscar Gonzalez** — [*Cómo construir un robot micromouse que resuelve un laberinto*](https://lab.bricogeek.com/tutorial/como-construir-un-robot-micromouse-que-resuelve-un-laberinto/como-resolver-un-laberinto)
 - **Microsiervos** — [*Un algoritmo para crear laberintos «interesantes»*](https://www.microsiervos.com/archivo/ordenadores/algoritmo-laberintos-interesantes.html)
 - **Universitat Politècnica de València** — [*Algoritmo de Kruskal*](https://arodrigu.webs.upv.es/grafos/doku.php?id=algoritmo_kruskal)
-- **Claude, Copilot y ChatGPT** — *Conceptos clave. Edición del README*  
+- **Claude y ChatGPT** — *Conceptos clave. Edición del README*  
