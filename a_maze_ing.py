@@ -7,10 +7,35 @@ from MazeGen import Algorithms
 from MazeGen import Graphics
 from MazeGen import solve_maze
 import sys
+import os
+import shutil
+
+
+def check_output_file(dictionary_output: Config):
+    """function for checking the output file"""
+    if os.path.isdir('outputs'):
+        print("is_dir\n")
+        if os.access('outputs', os.X_OK | os.W_OK | os.R_OK):
+            print("access\n")
+        else:
+            os.chmod("outputs", 0o777)
+            print("changing permissionsg\n")
+    else:
+        if os.path.exists('outputs'):
+            print("exists")
+            os.rmdir('outputs')
+        print("creating\n")
+        os.mkdir("outputs")
+    output: str = 'outputs/' + dictionary_output.get("output_file")
+    if os.path.isfile(output):
+        if os.access(output, os.W_OK):
+            return
+    if os.path.exists(output):
+        print(f"Invalid file cause of permissions or type: {output}")
+        exit(1)
 
 
 def main() -> None:
-
     parser = Parser()
     dictionary: RawConfig = {}
     argc: int = len(sys.argv)
@@ -30,6 +55,7 @@ def main() -> None:
               "the program will now close.")
         exit(1)
     dictionary_output: Config = parser.complete_dictionary(dictionary)
+    check_output_file(dictionary_output)
     maze = Maze(**dictionary_output)
     limits: int = maze.width * maze.height * 10
     sys.setrecursionlimit(limits)

@@ -8,6 +8,19 @@ import sys
 
 
 class RawConfig(TypedDict, total=False):
+    """TypedDict for the Raw config with null posible
+
+    Attributes:
+        WIDTH (int)
+        HEIGHT (int)
+        ENTRY (tuple[int, int])
+        EXIT (tuple[int, int])
+        OUTPUT_FILE (str)
+        PERFECT (bool)
+        ANIMATION (bool)
+        ALGORITHM (str)
+        SEED (int)
+    """
 
     WIDTH: int
     HEIGHT: int
@@ -21,7 +34,19 @@ class RawConfig(TypedDict, total=False):
 
 
 class Config(TypedDict):
+    """TypedDict for the Raw config with null posible
 
+    Attributes:
+        width (int)
+        height (int)
+        entry (tuple[int, int])
+        exit (tuple[int, int])
+        output_file (str)
+        perfect (bool)
+        animation (bool)
+        algorithm (str)
+        seed (int)
+    """
     width: int
     height: int
     entry: tuple[int, int]

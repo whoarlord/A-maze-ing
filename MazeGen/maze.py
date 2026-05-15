@@ -365,9 +365,12 @@ class Maze:
     def result_to_output(self, solution: str) -> None:
         """puts the corresponding information in the ourput file"""
         self.route = solution
-        with open(self.output_file, "w") as f:
-            f.write(self.map_to_str())
-            f.write(f"{self.entry[0]},{self.entry[1]}\n")
-            f.write(f"{self.exit[0]},{self.exit[1]}\n")
-            f.write(f"{solution}\n\n")
+        try:
+            with open("outputs/" + self.output_file, "w") as f:
+                f.write(self.map_to_str())
+                f.write(f"{self.entry[0]},{self.entry[1]}\n")
+                f.write(f"{self.exit[0]},{self.exit[1]}\n")
+                f.write(f"{solution}\n\n")
+        except Exception as e:
+            print(f"cant write on the file, i think now its your problem, {e}")
         print(f"Seed:{self.seed}\n")
