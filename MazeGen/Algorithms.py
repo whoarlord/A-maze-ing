@@ -1,5 +1,6 @@
 from .maze import Maze, Cell
 from random import randint, shuffle, seed
+import secrets
 
 
 class Algorithms:
@@ -29,12 +30,9 @@ class Algorithms:
 
     def create_seed(self, maze: Maze) -> None:
         """Function for creating a random seed for the maze"""
-        number: int = 0
-        for i in range(maze.height):
-            for j in range(maze.width):
-                number = (number + randint(0, 15)) * 2
-        maze.seed = number
-        seed(number)
+        seed = secrets.randbits(maze.width + maze.height)
+        maze.seed = seed
+        print(seed)
 
     def create_maze_kruskal(self, maze: Maze) -> None:
         """Function for creating a map using the kruskal algorithm

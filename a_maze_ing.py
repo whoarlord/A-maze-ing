@@ -56,14 +56,11 @@ def main() -> None:
     dictionary_output: Config = parser.complete_dictionary(dictionary)
     check_output_file(dictionary_output)
     if (dictionary_output["width"] * dictionary_output["height"] > 1000000):
-        print("the multiplicating between width and height cannot be bigger"
+        print("the multiplicating between width and height cannot be bigger "
               "than 1000000")
         exit(1)
     maze = Maze(**dictionary_output)
-    limits: int = maze.width * maze.height * 10
-    sys.setrecursionlimit(limits)
-    if (limits > 640):
-        sys.set_int_max_str_digits(maze.width * maze.height * 10)
+    sys.setrecursionlimit(maze.width * maze.height * 10)
     algorithms = Algorithms()
     algorithms.create_maze(maze)
     solve_maze(maze)
