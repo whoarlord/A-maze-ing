@@ -7,7 +7,7 @@ PIP=$(VIRTUALENV)/bin/pip
 
 MLX=$(VIRTUALENV)/lib/python3.13/site-packages/mlx
 DEPENDENCIES=requirements.txt
-MAZEVERSION=0.7
+MAZEVERSION=1.0
 MAZEPROGRAM=mazegen-$(MAZEVERSION)-py3-none-any.whl
 
 MAIN=a_maze_ing.py

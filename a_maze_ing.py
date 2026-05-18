@@ -8,7 +8,6 @@ from MazeGen import Graphics
 from MazeGen import solve_maze
 import sys
 import os
-import shutil
 
 
 def check_output_file(dictionary_output: Config):
@@ -56,6 +55,10 @@ def main() -> None:
         exit(1)
     dictionary_output: Config = parser.complete_dictionary(dictionary)
     check_output_file(dictionary_output)
+    if (dictionary_output["width"] * dictionary_output["height"] > 1000000):
+        print("the multiplicating between width and height cannot be bigger"
+              "than 1000000")
+        exit(1)
     maze = Maze(**dictionary_output)
     limits: int = maze.width * maze.height * 10
     sys.setrecursionlimit(limits)

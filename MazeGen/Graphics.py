@@ -82,6 +82,7 @@ class Graphics:
             exit(1)
 
     def initialize_animation(self, maze: Maze) -> None:
+        """Function for initializing the animation with MLX"""
         if self.animation:
             self.win_ptr = self.m.mlx_new_window(
                 self.mlx_ptr, self.win_width + 1, self.win_height + 1, "Maze")
