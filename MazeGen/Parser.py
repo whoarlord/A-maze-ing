@@ -100,7 +100,7 @@ class Parser:
                             dictionary.update({parameter: number})
 
                     except ValueError as e:
-                        print(f"{e}")
+                        raise Exception(f"Error in line: {line}, {e}")
 
                 case ("ENTRY" | "EXIT"):
 

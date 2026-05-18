@@ -2,6 +2,6 @@ from setuptools import setup, find_packages
 
 setup(
     name="mazegen",
-    version="0.7",
+    version="1.0",
     packages=find_packages(),
 )
