@@ -32,7 +32,6 @@ class Algorithms:
         """Function for creating a random seed for the maze"""
         seed = secrets.randbits(maze.width + maze.height)
         maze.seed = seed
-        print(seed)
 
     def create_maze_kruskal(self, maze: Maze) -> None:
         """Function for creating a map using the kruskal algorithm

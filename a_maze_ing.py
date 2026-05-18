@@ -10,7 +10,7 @@ import sys
 import os
 
 
-def check_output_file(dictionary_output: Config):
+def check_output_file(dictionary_output: Config) -> None:
     """function for checking the output file"""
     if os.path.isdir('outputs'):
         print("is_dir\n")
@@ -54,11 +54,11 @@ def main() -> None:
               "the program will now close.")
         exit(1)
     dictionary_output: Config = parser.complete_dictionary(dictionary)
-    check_output_file(dictionary_output)
     if (dictionary_output["width"] * dictionary_output["height"] > 1000000):
         print("the multiplicating between width and height cannot be bigger "
               "than 1000000")
         exit(1)
+    check_output_file(dictionary_output)
     maze = Maze(**dictionary_output)
     sys.setrecursionlimit(maze.width * maze.height * 10)
     algorithms = Algorithms()
