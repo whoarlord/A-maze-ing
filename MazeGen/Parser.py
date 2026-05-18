@@ -79,7 +79,7 @@ class Parser:
             return
         elif "=" in line:
             parameter, value = line.split("=")
-
+            parameter = parameter.upper()
             if value == "":
                 raise Exception(
                     f"Syntax error on line '{line}'. Please follow the next "
@@ -141,8 +141,18 @@ class Parser:
                             f"Error on line: '{line}'. {e}. Please follow the "
                             "next format for the ENTRY and EXIT: <NAME>=x,y")
                 case "OUTPUT_FILE":
-
-                    dictionary.update({parameter: value})
+                    extensions = value.split(".")
+                    if extensions[-1] == "txt":
+                        dictionary.update({parameter: value})
+                    elif len(extensions) == 1:
+                        raise Exception(
+                            f"Error on line: '{line}'. The given output file "
+                            "has to have the .txt extension.")
+                    else:
+                        raise Exception(
+                            f"Error on line: '{line}'. The given output file "
+                            "has to have the .txt extension, not the "
+                            f".{extensions[-1]} extension.")
 
                 case "SEED":
                     try:
