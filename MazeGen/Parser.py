@@ -174,9 +174,10 @@ class Parser:
 
                 case "PERFECT":
 
-                    if value == "True":
+                    capitalized = value.capitalize()
+                    if capitalized == "True" or capitalized == "1":
                         dictionary.update({parameter: True})
-                    elif value == "False":
+                    elif capitalized == "False" or capitalized == "0":
                         dictionary.update({parameter: False})
                     else:
                         raise PerfectError(line)
@@ -184,7 +185,7 @@ class Parser:
                 case "DISPLAY_MODE":
                     if value.capitalize() == "Normal":
                         dictionary.update({"ANIMATION": False})
-                    elif value == "Animated":
+                    elif value.capitalize() == "Animated":
                         dictionary.update({"ANIMATION": True})
                     else:
                         raise DisplayModeError(line)
